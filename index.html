@@ -635,12 +635,68 @@
     <div id="menu-modal" class="modal-overlay">
       <div class="modal-panel">
         <h2 id="modal-heading">MISSION LOG & SYSTEM</h2>
-        <div class="menu-options" id="modal-buttons">
+        <div class="menu-options" id="modal-buttons" style="max-height: 480px; overflow-y: auto;">
           <button class="menu-btn" id="m-btn-resume">RESUME MISSION <span class="badge">ESC</span></button>
-          <button class="menu-btn" id="m-btn-stage1">PLAY CHAPTER 1: THE COLLAPSE <span class="badge">Survive Grade 5</span></button>
-          <button class="menu-btn" id="m-btn-stage2">PLAY CHAPTER 2: HYBRID AWAKENING <span class="badge">Supernatural Powers</span></button>
-          <button class="menu-btn" id="m-btn-stage3">PLAY CHAPTER 3: DUEL WITH AGENT X <span class="badge">Grade 1 Boss</span></button>
-          <button class="menu-btn" id="m-btn-stage4">PLAY CHAPTER 4: CLASH WITH BLUE ZOMBIE <span class="badge">Grade 0 Sovereign</span></button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(1);">
+            CH 1: Shattered Normalcy
+            <span class="badge">District 7</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(2);">
+            CH 2: The Edge of Death
+            <span class="badge">Central Plaza</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(3);">
+            CH 3: The Hybrid Rebirth
+            <span class="badge">Haven Medical Bunker</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(4);">
+            CH 4: The Pioneer's Legacy
+            <span class="badge">Haven Sanctuary</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(5);">
+            CH 5: Building Haven & The Lost Friends
+            <span class="badge">Haven Settlement</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(6);">
+            CH 6: The First Love & A Family Born
+            <span class="badge">Haven Sanctuary</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(7);">
+            CH 7: Aristocrat's Shadow
+            <span class="badge">Haven Perimeter</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(8);">
+            CH 8: The Gathering Storm
+            <span class="badge">Haven Command Room</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(9);">
+            CH 9: The Siege of Haven
+            <span class="badge">Haven Outer Barricades</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(10);">
+            CH 10: The Sovereign Descends
+            <span class="badge">The Scorched Courtyard</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(11);">
+            CH 11: The Sovereign's Memory
+            <span class="badge">The Psychic Flashback</span>
+          </button>
+          
+          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(12);">
+            CH 12: The Ultimate Sacrifice & Epilogue
+            <span class="badge">The Scorched Ridge</span>
+          </button>
           <button class="menu-btn" id="m-btn-sound">AUDIO: SYNTHESIZER SOUND ON</button>
         </div>
       </div>
@@ -743,336 +799,761 @@
     /* =====================================================================
        CODEX / CANONICAL LORE DATA
        ===================================================================== */
-    const CODEX_DATA = [
-      {
-        tag: "Grade 0: Supreme",
-        name: "The Blue Zombie (The Sovereign)",
-        class: "grade-0",
-        desc: "Supreme controller of the infected hierarchy. Pale blue skin, wearing an ordinary gray T-shirt and black pants. Possesses terrifying intelligence and supernatural telekinetic abilities. Spared the protagonist purely out of arrogance and ego, deeming him too insignificant to crush."
-      },
-      {
-        tag: "Grade 1: Second-in-Command",
-        name: "Agent X",
-        class: "grade-1",
-        desc: "Extremely intelligent, refined human-like super-zombie. Wears an elegant black coat, white shirt, and burgundy vest with slicked dark hair. Lethal in close-quarters rapier combat and burgundy shadow arts."
-      },
-      {
-        tag: "Grade 2: Colossi",
-        name: "Titan Wyrms & Goliaths",
-        class: "",
-        desc: "Highly evolved colossal bio-forms engineered with immense muscle mass and regenerative dragon-like bio-plating."
-      },
-      {
-        tag: "Grade 3: Apex Stalker",
-        name: "Armed Predators",
-        class: "",
-        desc: "Tactical infected with human-level intelligence. Capable of coordinating ambushes, using axes, shields, and salvaged firearms."
-      },
-      {
-        tag: "Grade 4: Coordinated",
-        name: "Pack Stalkers",
-        class: "",
-        desc: "Infected that hunt in synchronized packs. Flank survivors with predatory leaps and high-speed crawling."
-      },
-      {
-        tag: "Grade 5: Instinct Swarm",
-        name: "Normal Infected",
-        class: "",
-        desc: "Mindless, ravenous thralls driven purely by primal hunger. Individually frail, but catastrophic in vast swarms."
-      },
-      {
-        tag: "Protagonist",
-        name: "Zest (The Sovereign Hybrid — SF2 Composite Sword)",
-        class: "grade-0",
-        desc: "Zest — a young survivor who lost everything during the outbreak. Battered to near death by the Blue Zombie, then rescued and transformed by Dr. Vance into a Human-Zombie Hybrid with superhuman speed, bio-energy blades, kinetic overdrive, the legendary Segmented Composite Sword from Shadow Fight 2, and high-caliber heavy Vulcan Machine Guns — surpassing Agent X in pure combat velocity and lethal range."
-      },
-      {
-        tag: "Founding Father",
-        name: "Dr. Arthur Vance",
-        class: "",
-        desc: "The guilt-ridden scientist who originally engineered the Blue Zombie as a military bio-weapon. Created Haven and transformed the protagonist before dying, leaving research for qualified survivors."
-      }
-    ];
+        const CODEX_DATA = MASTER_CHARACTERS.map(c => ({
+      tag: c.role,
+      name: c.name,
+      class: c.id === 'blue_zombie' ? 'grade-0' : (c.id === 'agent_x' ? 'grade-1' : (c.id === 'zest' ? 'grade-0' : '')),
+      desc: `[${c.status}] ${c.description} (Weapon: ${c.weapon || 'None'})`
+    }));
 
-    /* =====================================================================
-       STORY SCENARIOS & REFINED CANONICAL CUTSCENE SCRIPTS
+/* =====================================================================
+       EXPANDED 12-CHAPTER MASTER STORY CAMPAIGN (Chronicles of the Hybrid)
        ===================================================================== */
+    const MASTER_CHAPTERS = [
+  {
+    "id": 1,
+    "title": "Chapter 1: Shattered Normalcy",
+    "subtitle": "District 7 — The Autumn Before the Silence",
+    "synopsis": "An ordinary boy named Zest lives a peaceful modern life with his family, classmates, and his first love Maya, until a sudden biological catastrophe engulfs the city in terror.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "HISTORICAL ARCHIVE",
+        "theme": "#64748b",
+        "text": "Before the sirens became the only music of the world, there were school bells. There were crowded crosswalks, warm bakeries, and the gentle chatter of an autumn evening.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Zest",
+        "role": "ORDINARY STUDENT",
+        "theme": "#60a5fa",
+        "text": "I was just a normal kid. I complained about morning algebra tests, argued with my sister over whose turn it was to wash dinner plates, and spent hours talking by the river with Maya.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Maya",
+        "role": "FIRST LOVE",
+        "theme": "#f472b6",
+        "text": "\"Promise me, Zest... when we graduate next spring, we'll go see the ocean. No excuses, okay?\"",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Zest",
+        "role": "ORDINARY STUDENT",
+        "theme": "#60a5fa",
+        "text": "I gave her my silver locket and promised. My father worked at the civic transit office. My mother taught history. We had our entire lives ahead of us. We never made it to the coast.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "CRITICAL INCIDENT",
+        "theme": "#ef4444",
+        "text": "The collapse did not arrive with marching armies or diplomatic declarations. It arrived on a Tuesday afternoon—a bio-synthetic virus tearing through the metropolitan grid like a burst dam.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Zest",
+        "role": "ORDINARY STUDENT",
+        "theme": "#60a5fa",
+        "text": "The sirens started wailing in mid-class. The teachers yelled that it was a chemical spill. But then we heard screams, tearing metal, and shattering glass from the main hallway.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "THE FALL",
+        "theme": "#ef4444",
+        "text": "People who had walked the sidewalks minutes earlier turned on one another with feral hunger. Blood pooled over asphalt under flickering neon streetlamps.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "I ran all the way home. My chest felt like it was tearing apart. When I kicked open our front door... they were already inside. My parents had barricaded the living room, but the wood had splintered.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "My dad shoved me back toward the fire escape, yelling at me to run, never to look back. I saw his hand slip off the doorframe as the horde surged over him.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "TOTAL COLLAPSE",
+        "theme": "#64748b",
+        "text": "In less than forty-eight hours, every comforting pillar of civilization vanished. No electricity, no authorities. Only the relentless groans of the dead roaming the blackened streets.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "I hid in drainage culverts and abandoned storefronts. I watched friends get swallowed by the dark. Maya was gone. My family was gone. All that remained was a stubborn refusal to die.",
+        "mood": "resolute"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Chapter 2: The Edge of Death",
+    "subtitle": "Central Plaza — Day 27 After the Collapse",
+    "synopsis": "Scavenging for survival, Zest encounters the supreme progenitor: the Blue Zombie. A hopeless battle ends in near death, spared only by cruel arrogance.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "SURVIVAL LOG",
+        "theme": "#64748b",
+        "text": "Nearly a month passed. Zest learned the bitter craft of survival: checking blind corners, muffling footsteps with rags, and never lingering in open intersections.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "Most infected were stumbling husks driven by instinct. But over the weeks, I noticed something terrifying. Some were standing in formation. Coordinated. Waiting.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "THE SOVEREIGN ARRIVES",
+        "theme": "#38bdf8",
+        "text": "Near the shattered canopy of Central Plaza, an unnatural sub-zero chill settled over the boulevard. The lesser infected parted like reverent servants, collapsing against walls and lowering their heads.",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "VISUAL ENCOUNTER",
+        "theme": "#38bdf8",
+        "text": "From the shadows of the transit terminal, someone stepped into the pale moonlight. Not a snarling monstrosity with horns or armor, but a human silhouette with chilling pale blue skin, an ordinary plain gray T-shirt, and black trousers.",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "His eyes weren't glazed with madness. They were razor-sharp, piercing, and terrifyingly lucid. He looked at me the way an architect might glance at an insect crawling across blueprints.",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "The Blue Zombie",
+        "role": "GRADE 0: SOVEREIGN",
+        "theme": "#38bdf8",
+        "text": "\"Another stray. Still breathing the dust of a dead civilization. How dreadfully noisy.\"",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "\"Stay back! Stay away from me! HRAAAAGH!\"",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "COMBAT IMPACT",
+        "theme": "#ef4444",
+        "text": "Zest charged with all his remaining strength. The Sovereign didn't even raise an arm. A concussive telekinetic wave detonated from the air, violently hurling Zest thirty feet into concrete rubble.",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Zest",
+        "role": "YOUNG SURVIVOR",
+        "theme": "#60a5fa",
+        "text": "My ribs snapped. Blood poured into my throat. I couldn't move my arms. I lay in the rubble, staring up at him, waiting for the fatal strike.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "The Blue Zombie",
+        "role": "GRADE 0: SOVEREIGN",
+        "theme": "#38bdf8",
+        "text": "\"You are far too weak and insignificant to even bother extinguishing. Slaying you would only waste my breath. Rot in the dirt where you belong.\"",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "CANONICAL RECORD",
+        "theme": "#38bdf8",
+        "text": "With supreme arrogance and boundless ego, the Blue Zombie turned away and vanished into the fog. No prophecy. No hidden bloodline. Pure, unadulterated disdain.",
+        "mood": "menacing"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Chapter 3: The Hybrid Rebirth",
+    "subtitle": "Haven Medical Bunker — The Awakening",
+    "synopsis": "Dr. Arthur Vance rescues the dying youth, injecting experimental serum to forge a human-zombie hybrid with supernatural potential.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "FIELD RESCUE",
+        "theme": "#fbbf24",
+        "text": "Freezing rain washed across Zest's fading vision. His heartbeat slowed to a faint shudder. Then, heavy boots splashed through the crimson puddles.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Dr. Arthur Vance",
+        "role": "CHIEF SCIENTIST",
+        "theme": "#fbbf24",
+        "text": "\"Hold on, son! Don't you dare close your eyes! I'm getting you into the bunker right now!\"",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "GENETIC RESTRUCTURING",
+        "theme": "#38bdf8",
+        "text": "Inside the fortified underground lab, Vance monitored Zest's dying vitals. His blood possessed a rare genetic anomaly: natural antibodies actively bonding with the viral pathogen rather than dying.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Dr. Arthur Vance",
+        "role": "CHIEF SCIENTIST",
+        "theme": "#fbbf24",
+        "text": "\"The creature that crushed you... is Project Sovereign. The Blue Zombie. My original military bio-weapon. My unforgivable sin against humankind.\"",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Dr. Arthur Vance",
+        "role": "CHIEF SCIENTIST",
+        "theme": "#fbbf24",
+        "text": "\"Your genetic markers are extraordinarily compatible. I can save you... by bonding you into a Human-Zombie Hybrid!\"",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "THE AWAKENING",
+        "theme": "#38bdf8",
+        "text": "The pneumatic syringe hissed. Glowing cyan bio-threads ignited through Zest's veins. Fractured bones knit together; supernatural bio-kinetic currents awakened within his core.",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID AWAKENED",
+        "theme": "#38bdf8",
+        "text": "I woke up gasping for air. My hands were burning with azure energy. Dual heartbeats thumped inside my chest. I was alive... but I was no longer an ordinary boy.",
+        "mood": "resolute"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Chapter 4: The Pioneer's Legacy",
+    "subtitle": "Haven Sanctuary — The Foundation",
+    "synopsis": "Dr. Vance reveals the military origins of the outbreak, succumbs to terminal infection, and leaves his research to empower humanity.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "HISTORICAL REVELATION",
+        "theme": "#fbbf24",
+        "text": "For weeks, Dr. Vance mentored Zest, training him to control his bio-energy blades, kinetic overdrive, and instinctual impulses.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Dr. Arthur Vance",
+        "role": "FINAL WORDS",
+        "theme": "#fbbf24",
+        "text": "\"*Cough...* My own viral exposure has reached terminal stage. I established Haven so humanity might endure. Take my encrypted research drives...\"",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Dr. Arthur Vance",
+        "role": "FINAL WORDS",
+        "theme": "#fbbf24",
+        "text": "\"Use the formula to awaken qualified survivors when they are ready. Stand against the intelligent hierarchy... make up for my grave failure...\"",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "A SCIENTIST'S REST",
+        "theme": "#64748b",
+        "text": "Dr. Vance breathed his last in peace. Zest carved his memorial stone into the bedrock of Haven. From those ashes, the human resistance was born.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "\"I will protect Haven with everything I have. We will rebuild. We will endure.\"",
+        "mood": "resolute"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Chapter 5: Building Haven & The Lost Friends",
+    "subtitle": "Haven Settlement — Years 2 to 4",
+    "synopsis": "Zest expands Haven into a thriving sanctuary, reuniting with his surviving high school friends Kael, Ren, and Sora.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "SETTLEMENT EXPANSION",
+        "theme": "#10b981",
+        "text": "Over the next three years, Haven transformed from an abandoned bunker into a thriving settlement: reinforced blast walls, deep-aquifer hydro-wells, hydroponic farms, and medical clinics.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "On a scouting mission near the old radio towers, my squad intercepted a distress signal. When we broke through the horde... I couldn't believe my eyes.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Kael",
+        "role": "SURVIVING FRIEND",
+        "theme": "#eab308",
+        "text": "\"Zest?! Put down those glowing blades... wait, is that really you?! Man, we thought you were dead four years ago!\"",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "REUNITED BONDS",
+        "theme": "#10b981",
+        "text": "One by one, old friends were found: Kael, the hardened sniper; Ren, the genius diesel mechanic; and Sora, the selfless field doctor.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "With Dr. Vance's serum, Kael and selected volunteer survivors awakened controlled kinetic abilities. Haven had a real army now.",
+        "mood": "resolute"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Chapter 6: The First Love & A Family Born",
+    "subtitle": "Haven Sanctuary — Years 5 to 8",
+    "synopsis": "Zest miraculously discovers his first love Maya alive. Their bond matures into marriage and the birth of two sons, Liam and Ethan.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "DESTINY REKINDLED",
+        "theme": "#f472b6",
+        "text": "During an expedition into the northern alpine pine forests, Zest tracked survival smoke to an isolated cabin. Inside, holding a hunting knife, stood Maya.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Maya",
+        "role": "FIRST LOVE",
+        "theme": "#f472b6",
+        "text": "\"Zest... you're alive. You kept the locket... you really kept it.\"",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "REBUILDING LOVE",
+        "theme": "#f472b6",
+        "text": "The years had scarred them both, but in the quiet streets of Haven, their bond deepened. Under salvaged paper lanterns, Zest and Maya exchanged vows before the entire settlement.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "A NEW GENERATION",
+        "theme": "#f472b6",
+        "text": "Years passed. Maya gave birth to two sons: Liam, brave and spirited, and Ethan, gentle and thoughtful. For the first time since the world ended, Zest had a home he would die to protect.",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Zest",
+        "role": "FATHER & GUARDIAN",
+        "theme": "#38bdf8",
+        "text": "\"I tuck Liam and Ethan into bed, hear their laughter, and realize what we're fighting for. But the shadows beyond our walls are growing darker.\"",
+        "mood": "resolute"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Chapter 7: Aristocrat's Shadow",
+    "subtitle": "Haven Perimeter — Year 9",
+    "synopsis": "Agent X, the Grade 1 second-in-command, begins targeted surgical strikes against Haven's supply lines, testing Zest's hybrid strength.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "PERIMETER ALARM",
+        "theme": "#c084fc",
+        "text": "Emergency alarms shrieked across Haven's outer barricades. An elite squad of Grade 3 Apex Predators, coordinated with military precision, breached the viaduct depot.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Agent X",
+        "role": "GRADE 1: ARISTOCRAT",
+        "theme": "#c084fc",
+        "text": "\"So this is the sanctuary Dr. Vance cobbled together before his pathetic demise. Rather quaint, isn't it?\"",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "VISUAL DOSSIER",
+        "theme": "#c084fc",
+        "text": "A refined gentleman stepped through the burning debris: pale skin, slick dark hair, tailored black coat, pristine white collar, and deep burgundy vest, wielding a silver cane-blade rapier.",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "\"Agent X. You won't lay a finger on anyone inside these walls!\"",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Agent X",
+        "role": "GRADE 1: ARISTOCRAT",
+        "theme": "#c084fc",
+        "text": "\"The Sovereign may have granted you life out of aristocratic disdain, boy. But unlike my master, I do not tolerate loose ends.\"",
+        "mood": "menacing"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Chapter 8: The Gathering Storm",
+    "subtitle": "Haven Command Room — The Eve of War",
+    "synopsis": "Intelligence confirms the Blue Zombie has mobilized the entire infected hierarchy. Zest prepares Haven for the ultimate siege.",
+    "lines": [
+      {
+        "speaker": "Kael",
+        "role": "VANGUARD SNIPER",
+        "theme": "#eab308",
+        "text": "\"Zest, scouts report Grade 2 Titans leveling the mountain highways. The entire horde is marching. Thousands of them.\"",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Maya",
+        "role": "WIFE & MOTHER",
+        "theme": "#f472b6",
+        "text": "\"The children are safe in the deepest fallout shelter. Zest... promise me you will come back to us.\"",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "I hugged Maya, Liam, and Ethan. I placed the silver locket around Liam's neck. 'Keep your brother safe,' I told him. Then I drew my Composite Sword and walked to the gate.",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "MIDNIGHT SIRENS",
+        "theme": "#ef4444",
+        "text": "At midnight, the sky tore open with blinding azure lightning. The ground shuddered. The Sovereign's army had arrived.",
+        "mood": "menacing"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Chapter 9: The Siege of Haven",
+    "subtitle": "Haven Outer Barricades — The Final Defense",
+    "synopsis": "Haven's outer defenses collapse under overwhelming numbers. Zest duels Agent X in the burning courtyard.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "CATACLYSMIC SIEGE",
+        "theme": "#ef4444",
+        "text": "Grade 2 Titans rammed the hydraulic blast gates with earth-shattering force. Kael's kinetic snipers fired from the watchtowers as Ren detonated seismic perimeter mines.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Agent X",
+        "role": "GRADE 1: ARISTOCRAT",
+        "theme": "#c084fc",
+        "text": "\"Your little civilization burns, hybrid! Die with your toys!\"",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "FATAL STRIKE",
+        "theme": "#38bdf8",
+        "text": "Agent X lunged with his shadow rapier. Zest parried with the whip-blade of his Composite Sword, wrapping the segments around the aristocrat's neck and landing a fatal decapitating blow.",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Agent X",
+        "role": "FINAL WORDS",
+        "theme": "#c084fc",
+        "text": "\"Inconceivable... Sovereign... forgive me...\"",
+        "mood": "grief"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Chapter 10: The Sovereign Descends",
+    "subtitle": "The Scorched Courtyard — Face to Face",
+    "synopsis": "The Blue Zombie lands personally in Haven's courtyard, acknowledging that the boy he spared ten years ago has become his true rival.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "THE SOVEREIGN ARRIVES",
+        "theme": "#38bdf8",
+        "text": "Descending silently from the tempest, Grade 0 landed amidst swirling azure plasma. Chilling pale blue skin, ordinary gray T-shirt, black pants. Absolute majesty and suffocating authority.",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "The Blue Zombie",
+        "role": "GRADE 0: SOVEREIGN",
+        "theme": "#38bdf8",
+        "text": "\"Fascinating. Ten years ago, you were an insignificant insect writhing in the mud. Now, you pulse with the exact bio-resonance I was engineered with.\"",
+        "mood": "menacing"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "\"You spared me because of your arrogant ego. That mistake ends tonight. You will never touch my family or this sanctuary!\"",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "The Blue Zombie",
+        "role": "GRADE 0: SOVEREIGN",
+        "theme": "#38bdf8",
+        "text": "\"Then demonstrate your evolution, boy. Let us see if your artificial heart can endure the full might of God.\"",
+        "mood": "menacing"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Chapter 11: The Sovereign's Memory",
+    "subtitle": "The Psychic Flashback — Sins of the Creator",
+    "synopsis": "As their bio-kinetic auras clash, Zest's hybrid link uncovers the heartbreaking truth of the Blue Zombie's past.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "NEURAL RESONANCE",
+        "theme": "#38bdf8",
+        "text": "As their energy blades collided, a psychic resonance cascaded between their shared viral biology. A flood of forgotten memories burned into Zest's mind.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "THE FLASHBACK",
+        "theme": "#94a3b8",
+        "text": "Thirty years ago. A brilliant, gentle young medical researcher who volunteered to cure terminal diseases. Betrayed by military generals. Locked in sensory deprivation vaults for seven years. Tortured, dissected, injected with synthetic mutagenic viruses until his mind shattered into cold, beautiful perfection.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Zest",
+        "role": "HYBRID LEADER",
+        "theme": "#38bdf8",
+        "text": "\"You... you were just like me. You were human. They turned you into a weapon!\"",
+        "mood": "grief"
+      },
+      {
+        "speaker": "The Blue Zombie",
+        "role": "GRADE 0: SOVEREIGN",
+        "theme": "#38bdf8",
+        "text": "\"Humanity is a disease of weakness and betrayal. I excised my humanity decades ago. Feel the agony that birthed a God!\"",
+        "mood": "menacing"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Chapter 12: The Ultimate Sacrifice & Epilogue",
+    "subtitle": "The Scorched Ridge — The Dawn of Tomorrow",
+    "synopsis": "Zest unleashes an all-consuming final attack that obliterates the Sovereign at the cost of his own life. The war ends; his family and Haven endure.",
+    "lines": [
+      {
+        "speaker": "Narrator",
+        "role": "CLIMACTIC COLLISION",
+        "theme": "#ef4444",
+        "text": "The Sovereign unleashed a cataclysmic singularity. With his friends falling and the bunker doors cracking, Zest realized there was only one choice.",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Zest",
+        "role": "FINAL SACRIFICE",
+        "theme": "#38bdf8",
+        "text": "\"Dr. Vance gave me this power to protect life... Maya, Liam, Ethan... I love you! HRAAAAAAAAGH!\"",
+        "mood": "resolute"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "THE FINAL SACRIFICE",
+        "theme": "#38bdf8",
+        "text": "Zest overcharged his hybrid core to 500% capacity. An incandescent supernova of pure azure plasma incinerated the battlefield. The Blue Zombie shrieked in agony as his immortal body dissolved into dust.",
+        "mood": "tense"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "MUTUAL DEATH IN PAIN",
+        "theme": "#64748b",
+        "text": "The blast burned out Zest's cellular structure completely. He collapsed onto the scorched earth, his body suffering unbearable pain, gasping his final breaths as the storm cleared.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "THE UNBROKEN DAWN",
+        "theme": "#fbbf24",
+        "text": "Dawn broke over the valley. The infected hordes collapsed without their master. The bunker doors opened. Maya ran to the ridge with Liam and Ethan in tears.",
+        "mood": "grief"
+      },
+      {
+        "speaker": "Maya",
+        "role": "EPILOGUE",
+        "theme": "#f472b6",
+        "text": "\"Liam... Ethan... look at the sunrise. Your father gave his yesterday so that we could have tomorrow. Haven is safe.\"",
+        "mood": "normal"
+      },
+      {
+        "speaker": "Narrator",
+        "role": "MEMORIAL",
+        "theme": "#10b981",
+        "text": "A stone memorial marks the high ridge where Zest fell. Beneath his name, carved into the stone: 'THE HYBRID WHO SAVED HUMANITY. REST IN PEACE, ZEST.'",
+        "mood": "normal"
+      }
+    ]
+  }
+];
+    const MASTER_CHARACTERS = [
+  {
+    "id": "zest",
+    "name": "Zest",
+    "role": "The Reluctant Hybrid Leader",
+    "status": "Deceased (Final Mutual Sacrifice)",
+    "description": "Began as an ordinary high school student who lost his family during the collapse. Battered to near death by the Blue Zombie and spared out of pure ego. Transformed by Dr. Arthur Vance into a Human-Zombie Hybrid. Over ten years, he built Haven, reunited with friends, married his first love Maya, and raised two sons, Liam and Ethan. Sacrificed his life in a cataclysmic mutual death to eradicate the Blue Zombie.",
+    "avatar_color": "#38bdf8",
+    "weapon": "Shadow Fight 2 Segmented Composite Sword & Heavy Vulcan Machine Gun"
+  },
+  {
+    "id": "blue_zombie",
+    "name": "The Blue Zombie (The Sovereign)",
+    "role": "Grade 0 Supreme Ruler",
+    "status": "Deceased (Incinerated in Final Clash)",
+    "description": "Exceptionally handsome, charismatic, composed, and supremely arrogant. Chilling pale blue skin, ordinary plain gray T-shirt, and black trousers. Formerly a gentle medical volunteer betrayed and tortured by military contractors into Project Sovereign. Controlled the entire infected hierarchy through telepathic and telekinetic supremacy.",
+    "avatar_color": "#0284c7",
+    "weapon": "Telekinetic Singularity & Azure Plasma Ring"
+  },
+  {
+    "id": "agent_x",
+    "name": "Agent X (The Aristocrat)",
+    "role": "Grade 1 Second-in-Command",
+    "status": "Deceased (Slain by Zest)",
+    "description": "Refined, pale, handsome male antagonist with dark slicked hair, tailored black coat, pristine white shirt, and deep burgundy vest. Wields a silver rapier cane with lethal shadow teleportation. Ruthless and methodical, refusing to leave loose ends.",
+    "avatar_color": "#9333ea",
+    "weapon": "Silver Cane Rapier & Burgundy Shadow Arts"
+  },
+  {
+    "id": "dr_vance",
+    "name": "Dr. Arthur Vance",
+    "role": "Creator & Founding Father",
+    "status": "Deceased (Terminal Viral Exposure)",
+    "description": "The brilliant scientist who originally engineered the Blue Zombie under military contract. In deep remorse, he rescued the dying Zest, developed the hybrid infusion, founded the Haven settlement, and left behind encrypted research to awaken qualified survivors before succumbing to infection.",
+    "avatar_color": "#fbbf24",
+    "weapon": "Genetic Engineering & Neural Stabilizers"
+  },
+  {
+    "id": "maya",
+    "name": "Maya",
+    "role": "First Love & Wife",
+    "status": "Alive (Haven Matriarch)",
+    "description": "Zest's childhood first love from District 7. Survived the early years in hiding before being reunited with Zest. A compassionate, sharp-witted survivor who became Zest's wife and the mother of their two sons, Liam and Ethan. Survives to guide Haven after Zest's sacrifice.",
+    "avatar_color": "#f472b6",
+    "weapon": "Hunting Carbine & Medical Field Craft"
+  },
+  {
+    "id": "liam_ethan",
+    "name": "Liam & Ethan",
+    "role": "Sons of Zest & Maya",
+    "status": "Alive (Future of Humanity)",
+    "description": "Liam (age 7) and Ethan (age 5). Raised within the safety of Haven's reinforced sanctuary. They represent the life, love, and future that Zest fought and gave his life to protect.",
+    "avatar_color": "#34d399",
+    "weapon": "Wooden Practice Swords & Silver Locket"
+  },
+  {
+    "id": "kael_ren_sora",
+    "name": "Kael, Ren & Sora",
+    "role": "Surviving Friends & High Council",
+    "status": "Alive (Resistance Commanders)",
+    "description": "Zest's high school circle who survived against all odds. Kael became an elite kinetic sniper, Ren an engineering genius who maintained Haven's defenses, and Sora the chief physician carrying on Dr. Vance's medical legacy.",
+    "avatar_color": "#f59e0b",
+    "weapon": "Kinetic Sniper Rifles, Seismic Turrets & Field Medicine"
+  }
+];
+    const MASTER_JOURNALS = [
+  {
+    "id": "j_01",
+    "chapter_id": 1,
+    "title": "District 7 Memories",
+    "date": "Year 0 — Day 1",
+    "content": "A high school courtyard, warm bread from the corner bakery, and Maya's laughter by the river. That was my world before the sirens began. If I survive this, I promise never to forget their names."
+  },
+  {
+    "id": "j_02",
+    "chapter_id": 2,
+    "title": "The Humiliation in the Dust",
+    "date": "Year 0 — Day 27",
+    "content": "He didn't even look at me with hate. Just cold disgust. He called me an insect, turned his back, and walked away into the fog. The pain of my shattered ribs was nothing compared to the agony of my helplessness."
+  },
+  {
+    "id": "j_03",
+    "chapter_id": 3,
+    "title": "Two Heartbeats",
+    "date": "Year 0 — Day 40",
+    "content": "Dr. Vance saved my life, but I am changed. When I look in the mirror, my veins pulse with cyan light. My limbs move faster than thought. I am terrified of losing my mind to the virus, but Vance believes I can stay human."
+  },
+  {
+    "id": "j_04",
+    "chapter_id": 4,
+    "title": "Dr. Vance's Burial",
+    "date": "Year 1 — Day 120",
+    "content": "We buried him under the courtyard limestone. He gave his final breath trying to atone for creating the Blue Zombie. I held his research drives in my hand. Haven is now my responsibility."
+  },
+  {
+    "id": "j_05",
+    "chapter_id": 5,
+    "title": "The Old Gang Lives",
+    "date": "Year 3 — Day 310",
+    "content": "Kael, Ren, and Sora are alive. When Kael saw my hybrid eyes, he nearly shot me. Then we sat around the barrel fire, shared cold beans, and cried like kids. We are not alone anymore."
+  },
+  {
+    "id": "j_06",
+    "chapter_id": 6,
+    "title": "The Wooden Ring",
+    "date": "Year 5 — Day 215",
+    "content": "Maya said yes under the paper lanterns. Haven cheered until their voices gave out. When Liam was born, I held his tiny hand and wept. Everything I do from this moment on is for them."
+  },
+  {
+    "id": "j_07",
+    "chapter_id": 7,
+    "title": "The Shadow in the Red Vest",
+    "date": "Year 9 — Day 45",
+    "content": "Agent X is different from ordinary beasts. He speaks like an aristocrat and moves through shadows with a cane-blade rapier. The Sovereign has sent his second-in-command to test our gates."
+  },
+  {
+    "id": "j_08",
+    "chapter_id": 8,
+    "title": "The Midnight Locket",
+    "date": "Year 10 — Day 80",
+    "content": "I gave Liam the silver locket tonight. The sky to the north is burning blue. Sirens are blaring across the valley. Maya begged me to promise I'll return. I couldn't say the words."
+  },
+  {
+    "id": "j_09",
+    "chapter_id": 11,
+    "title": "The Sovereign's Tragedy",
+    "date": "Year 10 — Final Battle",
+    "content": "When our blades locked, his thoughts flooded into mine. Thirty years ago, he was a gentle medical researcher who volunteered to save lives. They tortured him. They destroyed his humanity. The Blue Zombie was forged in unfathomable agony."
+  },
+  {
+    "id": "j_10",
+    "chapter_id": 12,
+    "title": "The Dawn of Tomorrow",
+    "date": "Epilogue",
+    "content": "Zest's grave overlooks the sunrise. Liam wears the silver locket. Ethan plays with the wooden sword. Haven's gates stand wide and safe. He gave his yesterday so that we could have tomorrow."
+  }
+];
+
     const STORY_FLOW = {
-      // CHAPTER 1: THE COLLAPSE
-      prologue: [
-        {
-          speaker: "NARRATOR",
-          role: "SITUATION REPORT",
-          theme: "#64748b",
-          text: "A quiet, ordinary afternoon in the metropolitan district. Familiar storefronts, bustling avenues, a peaceful world... shattered in less than an hour."
-        },
-        {
-          speaker: "ZEST",
-          role: "YOUNG SURVIVOR — ZEST",
-          theme: "#60a5fa",
-          text: "\"Mom?! Dad?! Where did everyone go?! The emergency sirens won't stop screaming... and those people out there... what is wrong with them?!\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "SITUATION REPORT",
-          theme: "#64748b",
-          text: "Mindless, ravenous Grade 5 infected swarm every intersection. Returning home through the chaos, Zest discovers his apartment reduced to smoking ruins."
-        },
-        {
-          speaker: "ZEST",
-          role: "YOUNG SURVIVOR — ZEST",
-          theme: "#60a5fa",
-          text: "\"They're... they're gone. Everyone is gone. My hands are shaking, but I refuse to lay down and die. I have to fight my way out!\""
-        }
-      ],
-
-      // CHAPTER 1 CLIMAX: ENCOUNTER WITH GRADE 0
-      blueZombieFirstEncounter: [
-        {
-          speaker: "NARRATOR",
-          role: "ATMOSPHERIC SHIFT",
-          theme: "#38bdf8",
-          text: "The stench of decay vanishes, replaced by a sudden, unnatural chill. The concrete beneath Zest's boots groans under an invisible gravitational weight."
-        },
-        {
-          speaker: "ZEST",
-          role: "YOUNG SURVIVOR — ZEST",
-          theme: "#60a5fa",
-          text: "\"What... what is this suffocating pressure?! The air feels like solid ice... my limbs can barely move!\""
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"Another insect squirming helplessly in the ruins. How dreadfully noisy.\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "VISUAL ENCOUNTER",
-          theme: "#38bdf8",
-          text: "A human silhouette steps through the cold mist. Pale blue skin, an ordinary gray T-shirt, black trousers. No beastly horns, no monstrous armor—yet his presence alone radiates absolute authority."
-        },
-        {
-          speaker: "ZEST",
-          role: "YOUNG SURVIVOR — ZEST",
-          theme: "#60a5fa",
-          text: "\"Stay back! Don't you come any closer! HRAAAAGH!\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "COMBAT IMPACT",
-          theme: "#f43f5e",
-          text: "Zest charges with all his remaining strength—only for an imperceptible telekinetic wave to detonate! Zest is violently hurled thirty feet into concrete rubble, his bones fractured, battered within inches of death."
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"You are far too weak and insignificant to even bother extinguishing. Slaying you would only waste my breath. Rot in the dirt where you belong.\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "CANONICAL RECORD",
-          theme: "#38bdf8",
-          text: "With supreme arrogance and boundless ego, the Blue Zombie turns away and vanishes into the fog. No secret prophecy. No sentimentality. Pure, unadulterated disdain."
-        }
-      ],
-
-      // CHAPTER 2: REBIRTH AT HAVEN
-      scientistRescue: [
-        {
-          speaker: "NARRATOR",
-          role: "FIELD RESCUE",
-          theme: "#fbbf24",
-          text: "Freezing rain washes across Zest's fading vision. His heartbeat slows to a faint shudder. Then, urgent footsteps splash through the crimson puddles."
-        },
-        {
-          speaker: "DR. ARTHUR VANCE",
-          role: "CHIEF SCIENTIST",
-          theme: "#fbbf24",
-          text: "\"Hold on, son! Don't you dare close your eyes! I'm getting you into the medical bunker right now!\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "HAVEN SANCTUARY",
-          theme: "#fbbf24",
-          text: "Underground Haven Facility. Dr. Arthur Vance frantically monitors dying Zest's neural decay as heart monitors screech in alarm."
-        },
-        {
-          speaker: "DR. ARTHUR VANCE",
-          role: "CHIEF SCIENTIST",
-          theme: "#fbbf24",
-          text: "\"The creature that crushed you... is the Blue Zombie. My original military bio-weapon project. My unforgivable sin against humankind.\""
-        },
-        {
-          speaker: "DR. ARTHUR VANCE",
-          role: "CHIEF SCIENTIST",
-          theme: "#fbbf24",
-          text: "\"Your genetic markers are extraordinarily compatible—your antibodies are fighting the cellular necrosis! I can save you... by bonding you into a Human-Zombie Hybrid!\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "GENETIC AWAKENING",
-          theme: "#38bdf8",
-          text: "Vance depresses the pneumatic syringe. Luminous cyan bio-threads ignite within Zest's veins. Wounds seal instantly; supernatural bio-kinetic currents awaken within his core."
-        },
-        {
-          speaker: "DR. ARTHUR VANCE",
-          role: "FINAL WORDS",
-          theme: "#fbbf24",
-          text: "\"*Cough...* My own viral exposure has reached terminal stage. I established Haven so humanity might endure. Take my encrypted research drives...\""
-        },
-        {
-          speaker: "DR. ARTHUR VANCE",
-          role: "FINAL WORDS",
-          theme: "#fbbf24",
-          text: "\"Use the formula to awaken qualified survivors when they are ready. Stand against the intelligent hierarchy... make up for my grave failure...\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "THE AWAKENING",
-          theme: "#38bdf8",
-          text: "Dr. Vance breathes his last in peace. Zest rises to his feet, glowing azure bio-veins pulsing along his arms: a Hybrid reborn to defend the living."
-        }
-      ],
-
-      // CHAPTER 3: AGENT X'S INVASION
-      agentXIntro: [
-        {
-          speaker: "NARRATOR",
-          role: "PERIMETER BREACH",
-          theme: "#f43f5e",
-          text: "Emergency klaxons scream across Haven's outer barricades. Reinforced blast doors buckle inward under immense concussive force."
-        },
-        {
-          speaker: "AGENT X",
-          role: "GRADE 1: ARISTOCRAT",
-          theme: "#c084fc",
-          text: "\"So this is the sanctuary Dr. Vance cobbled together before his pathetic demise. Rather quaint, isn't it?\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "VISUAL DOSSIER",
-          theme: "#c084fc",
-          text: "A refined gentleman steps through the burning debris: pale skin, slick dark hair, tailored black coat, pristine white collar, and deep burgundy vest. He balances a slender cane-blade with lethal poise."
-        },
-        {
-          speaker: "AGENT X",
-          role: "GRADE 1: ARISTOCRAT",
-          theme: "#c084fc",
-          text: "\"And look what we have here. The mortal insect our Sovereign stepped past. Dr. Vance actually succeeded in hatching a functional hybrid.\""
-        },
-        {
-          speaker: "ZEST",
-          role: "HYBRID AWAKENED — ZEST",
-          theme: "#38bdf8",
-          text: "\"You're Grade 1... Agent X. I know what your hierarchy has done to this city. You will not lay a finger on anyone in Haven!\""
-        },
-        {
-          speaker: "AGENT X",
-          role: "GRADE 1: ARISTOCRAT",
-          theme: "#c084fc",
-          text: "\"The Sovereign may have granted you life out of aristocratic disdain, boy. But unlike my master, I do not tolerate loose ends.\""
-        }
-      ],
-
-      // CHAPTER 4: THE SOVEREIGN'S CLIMAX
-      blueZombieClimax: [
-        {
-          speaker: "AGENT X",
-          role: "GRADE 1: ARISTOCRAT",
-          theme: "#c084fc",
-          text: "\"Inconceivable...! To think unrefined human stubbornness could command such bio-kinetic velocity... Sovereign... forgive me...\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "SUPREME ARRIVAL",
-          theme: "#38bdf8",
-          text: "Agent X dissolves backward into burgundy shadows as the sky tears wide with blinding azure lightning."
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"Fascinating.\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "VISUAL RECORD",
-          theme: "#38bdf8",
-          text: "Descending silently from the tempest, Grade 0 lands upon the fractured earth. The Blue Zombie locks his cold, luminous cyan gaze onto the hybrid warrior Zest."
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"The insect I left in the dirt has sprouted fangs. You pulse with the very bio-resonance I was engineered with.\""
-        },
-        {
-          speaker: "ZEST",
-          role: "HYBRID AWAKENED — ZEST",
-          theme: "#38bdf8",
-          text: "\"You destroyed my family. You destroyed our world. Dr. Vance gave his life so we could stand and fight back. I am not running anymore!\""
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"Then demonstrate your worth, boy. Let us see if your artificial evolution can endure true divinity.\""
-        }
-      ],
-
-      // ENDING: THE UNFINISHED WAR
-      ending: [
-        {
-          speaker: "NARRATOR",
-          role: "CLIMACTIC COLLISION",
-          theme: "#38bdf8",
-          text: "A cataclysmic shockwave of azure plasma erupts across the cratered wasteland, illuminating the ruined skyline like an artificial dawn!"
-        },
-        {
-          speaker: "NARRATOR",
-          role: "AFTERMATH",
-          theme: "#38bdf8",
-          text: "The Hybrid channels Dr. Vance's kinetic matrix to the absolute limit, landing a seismic counter-strike that forces the Blue Zombie back three full strides—his gray shirt torn, azure aura raging with cold astonishment."
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"Heh... impressive. It seems I must retract my previous assessment. You are no longer insignificant.\""
-        },
-        {
-          speaker: "THE BLUE ZOMBIE",
-          role: "GRADE 0: SOVEREIGN",
-          theme: "#38bdf8",
-          text: "\"Cherish this sanctuary while it stands, boy. When next our paths cross, I shall tear that hybrid heart from your chest with my own hands.\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "TACTICAL RETREAT",
-          theme: "#38bdf8",
-          text: "With a thunderous sonic crack, the Blue Zombie vaults into the azure storm, retreating into the infected metropolis to rally his intelligent legions."
-        },
-        {
-          speaker: "NARRATOR",
-          role: "HOPE AWAKENED",
-          theme: "#fbbf24",
-          text: "The heavy blast doors of Haven grind open. Surviving doctors, engineers, and children gaze out at the young Hybrid, Zest, with tears of awe and renewed hope."
-        },
-        {
-          speaker: "ZEST",
-          role: "HYBRID AWAKENED — ZEST",
-          theme: "#38bdf8",
-          text: "\"The battle for Haven is won... but his army still controls the continent. We have Dr. Vance's research. We have our supernatural powers. The war to reclaim tomorrow begins now.\""
-        },
-        {
-          speaker: "NARRATOR",
-          role: "CHRONICLE CONTINUES",
-          theme: "#64748b",
-          text: "THE SOVEREIGN RETREATS — THE WAR RAGES ON. CONGRATULATIONS, SURVIVOR!"
-        }
-      ]
+      getChapterScript(id) {
+        const found = MASTER_CHAPTERS.find(c => c.id === id);
+        return found ? found.lines : MASTER_CHAPTERS[0].lines;
+      }
     };
 
     /* =====================================================================
@@ -1129,37 +1610,60 @@
         Boss.active = false;
         Player.resetForChapter(ch);
 
-        if (ch === 1) {
-          document.getElementById('stage-title').innerText = "CHAPTER 1: THE COLLAPSE";
-          document.getElementById('wave-tracker').innerText = "Survive Grade 5 Swarm";
-          this.quotaKilled = 12;
-          this.playCutscene(STORY_FLOW.prologue, () => {
-            this.state = 'PLAYING';
-            this.spawnHorde(12, 5);
-          });
-        } else if (ch === 2) {
-          document.getElementById('stage-title').innerText = "CHAPTER 2: HYBRID AWAKENING";
-          document.getElementById('wave-tracker').innerText = "Defend Haven Perimeter";
-          this.quotaKilled = 18;
-          this.playCutscene(STORY_FLOW.scientistRescue, () => {
-            this.state = 'PLAYING';
+        const chData = MASTER_CHAPTERS.find(c => c.id === ch) || MASTER_CHAPTERS[0];
+        document.getElementById('stage-title').innerText = chData.title.toUpperCase();
+        document.getElementById('wave-tracker').innerText = chData.subtitle;
+
+        // Custom mission flow for each of the 12 Arcs
+        this.playCutscene(chData.lines, () => {
+          this.state = 'PLAYING';
+          this.enemiesKilled = 0;
+
+          if (ch === 1) {
+            // Chapter 1: The Collapse
+            this.quotaKilled = 14;
+            this.spawnHorde(14, 5);
+          } else if (ch === 2) {
+            // Chapter 2: The Edge of Death (First Blue Zombie Encounter)
+            this.quotaKilled = 16;
+            this.spawnHorde(16, 5);
+          } else if (ch === 3) {
+            // Chapter 3: Hybrid Rebirth (Dr. Vance Rescue)
+            this.quotaKilled = 18;
             this.spawnHorde(18, 4);
-          });
-        } else if (ch === 3) {
-          document.getElementById('stage-title').innerText = "CHAPTER 3: ARISTOCRAT'S BLADE";
-          document.getElementById('wave-tracker').innerText = "Boss: Agent X (Grade 1)";
-          this.playCutscene(STORY_FLOW.agentXIntro, () => {
-            this.state = 'PLAYING';
+          } else if (ch === 4) {
+            // Chapter 4: Pioneer's Legacy (Dr. Vance's passing)
+            this.quotaKilled = 20;
+            this.spawnHorde(20, 4);
+          } else if (ch === 5) {
+            // Chapter 5: Building Haven & Reunited with Kael, Ren, Sora
+            this.quotaKilled = 22;
+            this.spawnHorde(22, 3);
+          } else if (ch === 6) {
+            // Chapter 6: First Love Maya & A Family Born
+            this.quotaKilled = 24;
+            this.spawnHorde(24, 3);
+          } else if (ch === 7) {
+            // Chapter 7: Aristocrat's Shadow (First Agent X Skirmish)
             Boss.spawnAgentX();
-          });
-        } else if (ch === 4) {
-          document.getElementById('stage-title').innerText = "CHAPTER 4: THE SOVEREIGN CLASH";
-          document.getElementById('wave-tracker').innerText = "Climactic Boss: Blue Zombie (Grade 0)";
-          this.playCutscene(STORY_FLOW.blueZombieClimax, () => {
-            this.state = 'PLAYING';
+          } else if (ch === 8) {
+            // Chapter 8: The Gathering Storm (Midnight Sirens)
+            this.quotaKilled = 28;
+            this.spawnHorde(28, 3);
+          } else if (ch === 9) {
+            // Chapter 9: Siege of Haven (Duel Agent X to the death)
+            Boss.spawnAgentX();
+          } else if (ch === 10) {
+            // Chapter 10: The Sovereign Descends (Face to Face with Blue Zombie)
             Boss.spawnBlueZombie();
-          });
-        }
+          } else if (ch === 11) {
+            // Chapter 11: The Sovereign's Memory (Psychic Flashback Clash)
+            Boss.spawnBlueZombie();
+          } else if (ch === 12) {
+            // Chapter 12: Ultimate Sacrifice & Epilogue
+            Boss.spawnBlueZombie();
+          }
+        });
       },
 
       playCutscene(scriptArray, onFinish) {
@@ -1385,35 +1889,46 @@
           Pickups.drop(enemy.x, enemy.y, false);
         }
 
-        if (this.currentChapter === 1) {
-          document.getElementById('wave-tracker').innerText = `Defeated: ${this.enemiesKilled} / ${this.quotaKilled}`;
-          if (this.enemiesKilled >= this.quotaKilled) {
-            // Trigger Chapter 1 climax cutscene (Blue Zombie arrives and spares boy due to ego)
-            this.state = 'STORY';
-            Enemies.list = [];
-            this.playCutscene(STORY_FLOW.blueZombieFirstEncounter, () => {
-              // Transition to Chapter 2
-              this.loadChapter(2);
-            });
-          }
-        } else if (this.currentChapter === 2) {
-          document.getElementById('wave-tracker').innerText = `Haven Defense: ${this.enemiesKilled} / ${this.quotaKilled}`;
-          if (this.enemiesKilled >= this.quotaKilled) {
-            // Trigger Chapter 3 (Agent X arrives)
-            this.loadChapter(3);
+        document.getElementById('wave-tracker').innerText = `Defeated: ${this.enemiesKilled} / ${this.quotaKilled}`;
+        if (this.quotaKilled && this.enemiesKilled >= this.quotaKilled) {
+          this.quotaKilled = 0;
+          Enemies.list = [];
+          const nextCh = this.currentChapter + 1;
+          if (nextCh <= MASTER_CHAPTERS.length) {
+            this.showBanner("CHAPTER COMPLETED", `PREPARING CHAPTER ${nextCh}...`);
+            setTimeout(() => { this.loadChapter(nextCh); }, 2500);
+          } else {
+            this.showBanner("WAR FOR TOMORROW", "EPILOGUE COMPLETE — SANCTUARY ENDURES");
           }
         }
       },
 
       onBossDefeated(bossName) {
-        if (bossName === 'AGENT_X') {
-          // Trigger Chapter 4 (Blue Zombie arrives for final clash)
-          this.loadChapter(4);
-        } else if (bossName === 'BLUE_ZOMBIE') {
-          // Trigger Ending Cutscene!
-          this.playCutscene(STORY_FLOW.ending, () => {
-            this.showBanner("WAR FOR TOMORROW", "CHAPTER COMPLETE - SAVED PROGRESS");
+        if (this.currentChapter === 7) {
+          // Chapter 7: Agent X retreats into burgundy shadows
+          this.showBanner("AGENT X RETREATS", "HAVEN GATES DEFENDED");
+          setTimeout(() => { this.loadChapter(8); }, 2500);
+        } else if (this.currentChapter === 9) {
+          // Chapter 9: Agent X permanently slain
+          this.showBanner("AGENT X SLAIN", "THE SOVEREIGN ENTERS THE BATTLEFIELD");
+          setTimeout(() => { this.loadChapter(10); }, 2500);
+        } else if (this.currentChapter === 10) {
+          // Chapter 10: Sovereign clash initiates psychic resonance
+          setTimeout(() => { this.loadChapter(11); }, 2000);
+        } else if (this.currentChapter === 11) {
+          // Chapter 11: Memory unlocked, entering final reckoning
+          setTimeout(() => { this.loadChapter(12); }, 2000);
+        } else if (this.currentChapter === 12) {
+          // Chapter 12: Ultimate Mutual Sacrifice Finale!
+          this.showBanner("ULTIMATE SACRIFICE", "REST IN PEACE, ZEST");
+          this.playCutscene(MASTER_CHAPTERS[11].lines, () => {
+            this.showBanner("THE UNBROKEN DAWN", "HUMANITY ENDURES IN HAVEN");
           });
+        } else {
+          const nextCh = this.currentChapter + 1;
+          if (nextCh <= MASTER_CHAPTERS.length) {
+            this.loadChapter(nextCh);
+          }
         }
       },
 
