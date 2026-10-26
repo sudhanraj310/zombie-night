@@ -1630,8 +1630,8 @@
           return;
         }
 
-        // Auto-fire when Shift held
-        if ((Input.keys['Shift'] || Input.keys['ShiftLeft'] || Input.keys['ShiftRight']) && Game.state === 'PLAYING') {
+        // Auto-fire when Shift held or right mouse held
+        if ((Input.shiftHeld || Input.keys['Shift']) && Game.state === 'PLAYING') {
           this.fireGun();
         }
 
@@ -2379,11 +2379,13 @@
       keys: {},
       mouseX: window.innerWidth / 2,
       mouseY: window.innerHeight / 2,
+      shiftHeld: false,
       joystick: { active: false, x: 0, y: 0, startX: 0, startY: 0 },
 
       init() {
         window.addEventListener('keydown', e => {
           this.keys[e.key] = true;
+          this.shiftHeld = e.shiftKey;
 
           if (Game.state === 'STORY') {
             if (e.key === ' ' || e.key === 'Enter') { Game.advanceDialogue(); e.preventDefault(); }
@@ -2395,11 +2397,13 @@
           if (e.key === ' ') { Player.dash(); e.preventDefault(); }
           if (e.key === 'e' || e.key === 'E') Player.spinBreaker();
           if (e.key === 'q' || e.key === 'Q') Player.cycleWeapon();
+          if (e.key === 'f' || e.key === 'F') Player.fireGun();
           if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') UI.toggleMenu();
         });
 
         window.addEventListener('keyup', e => {
           this.keys[e.key] = false;
+          this.shiftHeld = e.shiftKey;
         });
 
         window.addEventListener('mousemove', e => {
@@ -2411,6 +2415,7 @@
           Sound.init();
           if (Game.state === 'STORY') { Game.advanceDialogue(); return; }
           if (e.button === 0) Player.cycleWeapon();
+          if (e.button === 2) Player.fireGun();
         });
 
         window.addEventListener('contextmenu', e => e.preventDefault());
