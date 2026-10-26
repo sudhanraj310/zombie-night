@@ -59,33 +59,33 @@
     /* Cutscene Dialogue UI */
     #cutscene-ui {
       position: absolute;
-      bottom: 24px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
-      width: min(880px, 92vw);
-      background: var(--panel);
+      width: min(940px, 94vw);
+      background: rgba(8, 14, 24, 0.95);
       border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: 8px;
-      padding: 18px 24px;
+      border-left: 5px solid var(--accent);
+      border-radius: 12px;
+      padding: 22px 28px;
       display: none;
       flex-direction: row;
-      gap: 20px;
-      align-items: center;
+      gap: 24px;
+      align-items: flex-start;
       z-index: 60;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px var(--accent-glow);
-      backdrop-filter: blur(10px);
-      animation: slideUp 0.35s ease-out;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.85), 0 0 30px var(--accent-glow);
+      backdrop-filter: blur(14px);
+      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes slideUp {
-      from { opacity: 0; transform: translate(-50%, 20px); }
+      from { opacity: 0; transform: translate(-50%, 24px); }
       to { opacity: 1; transform: translate(-50%, 0); }
     }
     .speaker-avatar {
-      width: 68px;
-      height: 68px;
-      border-radius: 8px;
-      background: #0d1522;
+      width: 76px;
+      height: 76px;
+      border-radius: 10px;
+      background: #0b121e;
       border: 2px solid var(--border);
       display: flex;
       justify-content: center;
@@ -93,39 +93,114 @@
       flex-shrink: 0;
       overflow: hidden;
       position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      margin-top: 4px;
     }
     .dialogue-content {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 12px;
     }
     .dialogue-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 8px;
+    }
+    .speaker-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     .speaker-name {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--accent);
     }
-    .dialogue-text {
-      font-size: 15px;
-      line-height: 1.5;
-      color: var(--text);
-      min-height: 44px;
+    .speaker-role-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent);
+    }
+    .dialogue-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dialogue-btn-skip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dialogue-btn-skip:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
     }
     .dialogue-prompt {
       font-size: 11px;
+      font-weight: 700;
       color: var(--text-dim);
-      text-align: right;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       animation: pulse 1.5s infinite;
+      cursor: pointer;
     }
-    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .dialogue-text {
+      font-size: 16.5px;
+      line-height: 1.75;
+      letter-spacing: 0.35px;
+      color: #f1f5f9;
+      min-height: 52px;
+      font-weight: 400;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+    .dialogue-text em {
+      color: #94a3b8;
+      font-style: italic;
+    }
+    .dialogue-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .next-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #111e30;
+      border: 1px solid var(--accent-deep);
+      color: var(--accent);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .next-pill:hover {
+      background: var(--accent-deep);
+      color: #fff;
+      transform: translateX(2px);
+    }
 
     /* Top HUD */
     #hud {
@@ -430,14 +505,23 @@
     <!-- Cutscene Dialogue Box -->
     <div id="cutscene-ui">
       <div class="speaker-avatar" id="avatar-container">
-        <canvas id="avatarCanvas" width="68" height="68"></canvas>
+        <canvas id="avatarCanvas" width="76" height="76"></canvas>
       </div>
       <div class="dialogue-content">
         <div class="dialogue-header">
-          <div class="speaker-name" id="speaker-name">Narrator</div>
-          <div class="dialogue-prompt">[SPACE / CLICK TO ADVANCE]</div>
+          <div class="speaker-meta">
+            <span class="speaker-name" id="speaker-name">Narrator</span>
+            <span class="speaker-role-badge" id="speaker-role">SITUATION REPORT</span>
+          </div>
+          <div class="dialogue-controls">
+            <button class="dialogue-btn-skip" id="btn-skip-cutscene" title="Skip current cutscene">SKIP ❯❯</button>
+            <div class="dialogue-prompt">[SPACE / CLICK]</div>
+          </div>
         </div>
         <div class="dialogue-text" id="dialogue-text">...</div>
+        <div class="dialogue-footer">
+          <div class="next-pill" id="btn-next-dialogue">CONTINUE ❯</div>
+        </div>
       </div>
     </div>
 
@@ -659,65 +743,283 @@
     ];
 
     /* =====================================================================
-       STORY SCENARIOS & CUTSCENE SCRIPTS
+       STORY SCENARIOS & REFINED CANONICAL CUTSCENE SCRIPTS
        ===================================================================== */
     const STORY_FLOW = {
-      // CHAPTER 1
+      // CHAPTER 1: THE COLLAPSE
       prologue: [
-        { speaker: "NARRATOR", text: "The year was quiet, until the sirens began. A normal world shattered in less than an hour." },
-        { speaker: "PROTAGONIST", text: "Mom?! Dad?! Where are you?! Everyone... everyone is screaming..." },
-        { speaker: "NARRATOR", text: "Mindless corpses swarmed the streets. With his home in ruins, the boy picked up a rusty iron pipe." },
-        { speaker: "PROTAGONIST", text: "I have to survive. I have to fight my way out of this nightmare!" }
+        {
+          speaker: "NARRATOR",
+          role: "SITUATION REPORT",
+          theme: "#64748b",
+          text: "A quiet, ordinary afternoon in the metropolitan district. Familiar storefronts, bustling avenues, a peaceful world... shattered in less than an hour."
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "YOUNG SURVIVOR",
+          theme: "#60a5fa",
+          text: "\"Mom?! Dad?! Where did everyone go?! The emergency sirens won't stop screaming... and those people out there... what is wrong with them?!\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "SITUATION REPORT",
+          theme: "#64748b",
+          text: "Mindless, ravenous Grade 5 infected swarm every intersection. Returning home through the chaos, the boy discovers his apartment reduced to smoking ruins."
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "YOUNG SURVIVOR",
+          theme: "#60a5fa",
+          text: "\"They're... they're gone. Everyone is gone. My hands are shaking, but I refuse to lay down and die. I have to fight my way out!\""
+        }
       ],
+
+      // CHAPTER 1 CLIMAX: ENCOUNTER WITH GRADE 0
       blueZombieFirstEncounter: [
-        { speaker: "NARRATOR", text: "The air drops to freezing temperatures. An oppressive, suffocating aura blankets the avenue." },
-        { speaker: "PROTAGONIST", text: "What... what is that presence?! My limbs can barely move!" },
-        { speaker: "BLUE ZOMBIE", text: "Another insect flailing in the wreckage. How noisy." },
-        { speaker: "NARRATOR", text: "A humanoid figure steps forward. Pale blue skin, an ordinary gray T-shirt, black pants... yet the ground cracks under his gaze." },
-        { speaker: "PROTAGONIST", text: "GET AWAY FROM ME! HRAAAAGH!" },
-        { speaker: "NARRATOR", text: "The boy swings his weapon with all his might—only for an invisible barrier of telekinetic pressure to shatter it instantly!" },
-        { speaker: "NARRATOR", text: "BOOM! The boy is hurled thirty feet into broken concrete, battered within inches of death." },
-        { speaker: "BLUE ZOMBIE", text: "..." },
-        { speaker: "BLUE ZOMBIE", text: "You are far too weak and insignificant to even bother killing. Rot in the dirt where you belong." },
-        { speaker: "NARRATOR", text: "With supreme arrogance, the Blue Zombie turns his back and walks away into the fog. No pity. No prophecy. Pure ego." }
+        {
+          speaker: "NARRATOR",
+          role: "ATMOSPHERIC SHIFT",
+          theme: "#38bdf8",
+          text: "The stench of decay vanishes, replaced by a sudden, unnatural chill. The concrete beneath the boy's boots groans under an invisible gravitational weight."
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "YOUNG SURVIVOR",
+          theme: "#60a5fa",
+          text: "\"What... what is this suffocating pressure?! The air feels like solid ice... my limbs can barely move!\""
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"Another insect squirming helplessly in the ruins. How dreadfully noisy.\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "VISUAL ENCOUNTER",
+          theme: "#38bdf8",
+          text: "A human silhouette steps through the cold mist. Pale blue skin, an ordinary gray T-shirt, black trousers. No beastly horns, no monstrous armor—yet his presence alone radiates absolute authority."
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "YOUNG SURVIVOR",
+          theme: "#60a5fa",
+          text: "\"Stay back! Don't you come any closer! HRAAAAGH!\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "COMBAT IMPACT",
+          theme: "#f43f5e",
+          text: "The boy charges with all his remaining strength—only for an imperceptible telekinetic wave to detonate! The boy is violently hurled thirty feet into concrete rubble, his bones fractured, battered within inches of death."
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"You are far too weak and insignificant to even bother extinguishing. Slaying you would only waste my breath. Rot in the dirt where you belong.\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "CANONICAL RECORD",
+          theme: "#38bdf8",
+          text: "With supreme arrogance and boundless ego, the Blue Zombie turns away and vanishes into the fog. No secret prophecy. No sentimentality. Pure, unadulterated disdain."
+        }
       ],
+
+      // CHAPTER 2: REBIRTH AT HAVEN
       scientistRescue: [
-        { speaker: "NARRATOR", text: "Cold rain washes the blood from the boy's face. Heavy footsteps rush toward him." },
-        { speaker: "DR. VANCE", text: "Hold on, son! Don't you close your eyes! I'm bringing you to the bunker!" },
-        { speaker: "NARRATOR", text: "Underground Haven Laboratory. Dr. Arthur Vance injects a luminous cyan serum into the dying boy's heart." },
-        { speaker: "DR. VANCE", text: "The monster that crushed you... is the Blue Zombie. My military project. My unforgivable sin." },
-        { speaker: "DR. VANCE", text: "Your genetic markers are resisting the strain! I can rewrite your cells... forge you into a hybrid!" },
-        { speaker: "NARRATOR", text: "Azure energy pulses through the boy's veins. His wounds stitch shut. Supernatural power awakens within." },
-        { speaker: "DR. VANCE", text: "Cough... my own infection is irreversible. I established Haven for the survivors. Take my research..." },
-        { speaker: "DR. VANCE", text: "Awaken the qualified survivors... protect the world... from the Blue Zombie..." },
-        { speaker: "NARRATOR", text: "Dr. Vance breathes his last. The boy rises as a Human-Zombie Hybrid, imbued with formidable kinetic energy." }
+        {
+          speaker: "NARRATOR",
+          role: "FIELD RESCUE",
+          theme: "#fbbf24",
+          text: "Freezing rain washes across the boy's fading vision. His heartbeat slows to a faint shudder. Then, urgent footsteps splash through the crimson puddles."
+        },
+        {
+          speaker: "DR. ARTHUR VANCE",
+          role: "CHIEF SCIENTIST",
+          theme: "#fbbf24",
+          text: "\"Hold on, son! Don't you dare close your eyes! I'm getting you into the medical bunker right now!\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "HAVEN SANCTUARY",
+          theme: "#fbbf24",
+          text: "Underground Haven Facility. Dr. Arthur Vance frantically monitors the dying boy's neural decay as heart monitors screech in alarm."
+        },
+        {
+          speaker: "DR. ARTHUR VANCE",
+          role: "CHIEF SCIENTIST",
+          theme: "#fbbf24",
+          text: "\"The creature that crushed you... is the Blue Zombie. My original military bio-weapon project. My unforgivable sin against humankind.\""
+        },
+        {
+          speaker: "DR. ARTHUR VANCE",
+          role: "CHIEF SCIENTIST",
+          theme: "#fbbf24",
+          text: "\"Your genetic markers are extraordinarily compatible—your antibodies are fighting the cellular necrosis! I can save you... by bonding you into a Human-Zombie Hybrid!\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "GENETIC AWAKENING",
+          theme: "#38bdf8",
+          text: "Vance depresses the pneumatic syringe. Luminous cyan bio-threads ignite within the boy's veins. Wounds seal instantly; supernatural bio-kinetic currents awaken within his core."
+        },
+        {
+          speaker: "DR. ARTHUR VANCE",
+          role: "FINAL WORDS",
+          theme: "#fbbf24",
+          text: "\"*Cough...* My own viral exposure has reached terminal stage. I established Haven so humanity might endure. Take my encrypted research drives...\""
+        },
+        {
+          speaker: "DR. ARTHUR VANCE",
+          role: "FINAL WORDS",
+          theme: "#fbbf24",
+          text: "\"Use the formula to awaken qualified survivors when they are ready. Stand against the intelligent hierarchy... make up for my grave failure...\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "THE AWAKENING",
+          theme: "#38bdf8",
+          text: "Dr. Vance breathes his last in peace. The boy rises to his feet, glowing azure bio-veins pulsing along his arms: a Hybrid reborn to defend the living."
+        }
       ],
+
+      // CHAPTER 3: AGENT X'S INVASION
       agentXIntro: [
-        { speaker: "NARRATOR", text: "Emergency sirens echo across Haven's outer barricades. An elite strike force has breached the gates." },
-        { speaker: "AGENT X", text: "So this is Dr. Vance's little sanctuary of hopeless rodents." },
-        { speaker: "NARRATOR", text: "A refined gentleman stands amid the smoke: slick dark hair, tailored black coat, white shirt, and burgundy vest." },
-        { speaker: "AGENT X", text: "And you... the boy our Sovereign deemed unworthy of killing. You actually survived as a hybrid?" },
-        { speaker: "PROTAGONIST", text: "You're Grade 1... Agent X. I won't let you harm another soul here!" },
-        { speaker: "AGENT X", text: "The Sovereign may have been merciful in his arrogance, boy. But I do not leave loose ends." }
+        {
+          speaker: "NARRATOR",
+          role: "PERIMETER BREACH",
+          theme: "#f43f5e",
+          text: "Emergency klaxons scream across Haven's outer barricades. Reinforced blast doors buckle inward under immense concussive force."
+        },
+        {
+          speaker: "AGENT X",
+          role: "GRADE 1: ARISTOCRAT",
+          theme: "#c084fc",
+          text: "\"So this is the sanctuary Dr. Vance cobbled together before his pathetic demise. Rather quaint, isn't it?\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "VISUAL DOSSIER",
+          theme: "#c084fc",
+          text: "A refined gentleman steps through the burning debris: pale skin, slick dark hair, tailored black coat, pristine white collar, and deep burgundy vest. He balances a slender cane-blade with lethal poise."
+        },
+        {
+          speaker: "AGENT X",
+          role: "GRADE 1: ARISTOCRAT",
+          theme: "#c084fc",
+          text: "\"And look what we have here. The mortal insect our Sovereign stepped past. Dr. Vance actually succeeded in hatching a functional hybrid.\""
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "HYBRID AWAKENED",
+          theme: "#38bdf8",
+          text: "\"You're Grade 1... Agent X. I know what your hierarchy has done to this city. You will not lay a finger on anyone in Haven!\""
+        },
+        {
+          speaker: "AGENT X",
+          role: "GRADE 1: ARISTOCRAT",
+          theme: "#c084fc",
+          text: "\"The Sovereign may have granted you life out of aristocratic disdain, boy. But unlike my master, I do not tolerate loose ends.\""
+        }
       ],
+
+      // CHAPTER 4: THE SOVEREIGN'S CLIMAX
       blueZombieClimax: [
-        { speaker: "AGENT X", text: "Ngh...! Such unrefined, vulgar strength... Sovereign..." },
-        { speaker: "NARRATOR", text: "Agent X phases back into the shadows as the sky tears open with azure lightning." },
-        { speaker: "BLUE ZOMBIE", text: "Fascinating." },
-        { speaker: "NARRATOR", text: "Grade 0 descends without a sound. The Blue Zombie glares down at the glowing hybrid boy." },
-        { speaker: "BLUE ZOMBIE", text: "The insect I spared has sprouted claws. You pulse with my stolen bio-frequency." },
-        { speaker: "PROTAGONIST", text: "You tore my world apart. Dr. Vance gave his life so we could stand against you. I'm not running anymore!" },
-        { speaker: "BLUE ZOMBIE", text: "Then let us see if your little evolution can endure true divinity." }
+        {
+          speaker: "AGENT X",
+          role: "GRADE 1: ARISTOCRAT",
+          theme: "#c084fc",
+          text: "\"Inconceivable...! To think unrefined human stubbornness could command such bio-kinetic velocity... Sovereign... forgive me...\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "SUPREME ARRIVAL",
+          theme: "#38bdf8",
+          text: "Agent X dissolves backward into burgundy shadows as the sky tears wide with blinding azure lightning."
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"Fascinating.\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "VISUAL RECORD",
+          theme: "#38bdf8",
+          text: "Descending silently from the tempest, Grade 0 lands upon the fractured earth. The Blue Zombie locks his cold, luminous cyan gaze onto the hybrid boy."
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"The insect I left in the dirt has sprouted fangs. You pulse with the very bio-resonance I was engineered with.\""
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "HYBRID AWAKENED",
+          theme: "#38bdf8",
+          text: "\"You destroyed my family. You destroyed our world. Dr. Vance gave his life so we could stand and fight back. I am not running anymore!\""
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"Then demonstrate your worth, boy. Let us see if your artificial evolution can endure true divinity.\""
+        }
       ],
+
+      // ENDING: THE UNFINISHED WAR
       ending: [
-        { speaker: "NARRATOR", text: "A catastrophic collision of azure shockwaves shatters the perimeter!" },
-        { speaker: "NARRATOR", text: "The Hybrid's kinetic burst drives the Blue Zombie back three paces—his gray shirt torn, azure aura raging." },
-        { speaker: "BLUE ZOMBIE", text: "Heh... admirable. You are no longer insignificant, boy." },
-        { speaker: "BLUE ZOMBIE", text: "Keep growing stronger. When our paths cross again, I will tear that hybrid heart from your chest." },
-        { speaker: "NARRATOR", text: "The Blue Zombie teleports into the azure storm clouds, retreating into the ruins." },
-        { speaker: "NARRATOR", text: "Haven's survivors emerge from the bunkers, rallying around the young Hybrid. The sunrise breaks through the smog." },
-        { speaker: "PROTAGONIST", text: "This was only the first battle. But we now have the strength to fight back. We will reclaim tomorrow." },
-        { speaker: "NARRATOR", text: "TO BE CONTINUED IN CHAPTER 2: THE WAR FOR TOMORROW." }
+        {
+          speaker: "NARRATOR",
+          role: "CLIMACTIC COLLISION",
+          theme: "#38bdf8",
+          text: "A cataclysmic shockwave of azure plasma erupts across the cratered wasteland, illuminating the ruined skyline like an artificial dawn!"
+        },
+        {
+          speaker: "NARRATOR",
+          role: "AFTERMATH",
+          theme: "#38bdf8",
+          text: "The Hybrid channels Dr. Vance's kinetic matrix to the absolute limit, landing a seismic counter-strike that forces the Blue Zombie back three full strides—his gray shirt torn, azure aura raging with cold astonishment."
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"Heh... impressive. It seems I must retract my previous assessment. You are no longer insignificant.\""
+        },
+        {
+          speaker: "THE BLUE ZOMBIE",
+          role: "GRADE 0: SOVEREIGN",
+          theme: "#38bdf8",
+          text: "\"Cherish this sanctuary while it stands, boy. When next our paths cross, I shall tear that hybrid heart from your chest with my own hands.\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "TACTICAL RETREAT",
+          theme: "#38bdf8",
+          text: "With a thunderous sonic crack, the Blue Zombie vaults into the azure storm, retreating into the infected metropolis to rally his intelligent legions."
+        },
+        {
+          speaker: "NARRATOR",
+          role: "HOPE AWAKENED",
+          theme: "#fbbf24",
+          text: "The heavy blast doors of Haven grind open. Surviving doctors, engineers, and children gaze out at the young Hybrid with tears of awe and renewed hope."
+        },
+        {
+          speaker: "PROTAGONIST",
+          role: "HYBRID AWAKENED",
+          theme: "#38bdf8",
+          text: "\"The battle for Haven is won... but his army still controls the continent. We have Dr. Vance's research. We have our supernatural powers. The war to reclaim tomorrow begins now.\""
+        },
+        {
+          speaker: "NARRATOR",
+          role: "CHRONICLE CONTINUES",
+          theme: "#64748b",
+          text: "THE SOVEREIGN RETREATS — THE WAR RAGES ON. CONGRATULATIONS, SURVIVOR!"
+        }
       ]
     };
 
@@ -814,7 +1116,22 @@
         this.scriptIndex = 0;
         this.onCutsceneFinish = onFinish;
         document.body.classList.add('in-cutscene');
-        document.getElementById('cutscene-ui').style.display = 'flex';
+        const cutsceneBox = document.getElementById('cutscene-ui');
+        cutsceneBox.style.display = 'flex';
+        
+        // Setup interactive button events
+        document.getElementById('btn-skip-cutscene').onclick = (e) => {
+          e.stopPropagation();
+          this.endCutscene();
+        };
+        document.getElementById('btn-next-dialogue').onclick = (e) => {
+          e.stopPropagation();
+          this.advanceDialogue();
+        };
+        cutsceneBox.onclick = () => {
+          this.advanceDialogue();
+        };
+
         this.showDialogueLine();
       },
 
@@ -824,8 +1141,20 @@
           return;
         }
         const item = this.script[this.scriptIndex];
-        document.getElementById('speaker-name').innerText = item.speaker;
-        this.renderAvatar(item.speaker);
+        const speakerEl = document.getElementById('speaker-name');
+        const roleEl = document.getElementById('speaker-role');
+        const cutsceneBox = document.getElementById('cutscene-ui');
+
+        speakerEl.innerText = item.speaker;
+        speakerEl.style.color = item.theme || '#38bdf8';
+        roleEl.innerText = item.role || 'COMMUNICATION';
+        roleEl.style.color = item.theme || '#38bdf8';
+        roleEl.style.borderColor = (item.theme || '#38bdf8') + '55';
+        roleEl.style.backgroundColor = (item.theme || '#38bdf8') + '1a';
+        cutsceneBox.style.borderLeftColor = item.theme || '#38bdf8';
+        cutsceneBox.style.boxShadow = `0 16px 50px rgba(0,0,0,0.85), 0 0 30px ${item.theme || '#38bdf8'}33`;
+
+        this.renderAvatar(item.speaker, item.theme);
         
         const textEl = document.getElementById('dialogue-text');
         textEl.innerText = "";
@@ -837,14 +1166,14 @@
           if (this.charIndex < this.dialogueTextTarget.length) {
             textEl.innerText += this.dialogueTextTarget[this.charIndex];
             if (this.charIndex % 3 === 0) {
-              const pitch = item.speaker === 'BLUE ZOMBIE' ? 240 : (item.speaker === 'AGENT X' ? 380 : 540);
+              const pitch = item.speaker.includes('BLUE ZOMBIE') ? 220 : (item.speaker.includes('AGENT X') ? 360 : (item.speaker.includes('VANCE') ? 440 : 540));
               Sound.beep(pitch);
             }
             this.charIndex++;
           } else {
             clearInterval(this.dialogueTimer);
           }
-        }, 22);
+        }, 20);
       },
 
       advanceDialogue() {
@@ -860,6 +1189,7 @@
       },
 
       endCutscene() {
+        if (this.dialogueTimer) clearInterval(this.dialogueTimer);
         document.body.classList.remove('in-cutscene');
         document.getElementById('cutscene-ui').style.display = 'none';
         if (this.onCutsceneFinish) {
@@ -869,98 +1199,108 @@
         }
       },
 
-      renderAvatar(speaker) {
-        avCtx.clearRect(0, 0, 68, 68);
-        avCtx.fillStyle = '#0c131e';
-        avCtx.fillRect(0, 0, 68, 68);
+      renderAvatar(speaker, themeColor = '#38bdf8') {
+        avCtx.clearRect(0, 0, 76, 76);
+        avCtx.fillStyle = '#0a101b';
+        avCtx.fillRect(0, 0, 76, 76);
 
-        if (speaker === 'BLUE ZOMBIE') {
-          // Blue Zombie: human shaped, blue skin, gray t-shirt, glowing cyan eyes
+        if (speaker.includes('BLUE ZOMBIE')) {
+          // CANONICAL BLUE ZOMBIE: Human-shaped, pale blue skin, ordinary gray T-shirt, black pants
           avCtx.fillStyle = '#22d3ee'; // pale blue skin
           avCtx.beginPath();
-          avCtx.arc(34, 26, 16, 0, Math.PI * 2);
+          avCtx.arc(38, 28, 17, 0, Math.PI * 2);
           avCtx.fill();
           // Eyes
           avCtx.fillStyle = '#ffffff';
-          avCtx.fillRect(28, 24, 4, 3);
-          avCtx.fillRect(36, 24, 4, 3);
-          // Gray t-shirt
+          avCtx.fillRect(32, 26, 4, 3);
+          avCtx.fillRect(40, 26, 4, 3);
+          // Ordinary Gray T-shirt
           avCtx.fillStyle = '#64748b';
-          avCtx.fillRect(20, 44, 28, 24);
-          // Azure glow aura around frame
-          avCtx.strokeStyle = '#06b6d4';
+          avCtx.fillRect(22, 48, 32, 28);
+          // Azure telekinetic aura border
+          avCtx.strokeStyle = '#38bdf8';
           avCtx.lineWidth = 3;
-          avCtx.strokeRect(0, 0, 68, 68);
-        } else if (speaker === 'AGENT X') {
-          // Agent X: pale skin, dark slick hair, black coat, burgundy vest
+          avCtx.strokeRect(1, 1, 74, 74);
+        } else if (speaker.includes('AGENT X')) {
+          // CANONICAL AGENT X: Pale human male, dark slick hair, black coat, burgundy vest
           avCtx.fillStyle = '#ffe4e6'; // pale human skin
           avCtx.beginPath();
-          avCtx.arc(34, 26, 15, 0, Math.PI * 2);
+          avCtx.arc(38, 28, 16, 0, Math.PI * 2);
           avCtx.fill();
           // Dark slick hair
           avCtx.fillStyle = '#0f172a';
           avCtx.beginPath();
-          avCtx.arc(34, 20, 16, Math.PI, 0);
+          avCtx.arc(38, 22, 17, Math.PI, 0);
           avCtx.fill();
           // Burgundy vest & black coat
           avCtx.fillStyle = '#881337'; // burgundy
-          avCtx.fillRect(26, 44, 16, 24);
+          avCtx.fillRect(29, 48, 18, 28);
           avCtx.fillStyle = '#090d16'; // black coat lapels
-          avCtx.fillRect(16, 44, 10, 24);
-          avCtx.fillRect(42, 44, 10, 24);
-          avCtx.strokeStyle = '#9333ea';
+          avCtx.fillRect(18, 48, 11, 28);
+          avCtx.fillRect(47, 48, 11, 28);
+          avCtx.strokeStyle = '#c084fc';
           avCtx.lineWidth = 3;
-          avCtx.strokeRect(0, 0, 68, 68);
-        } else if (speaker === 'PROTAGONIST') {
-          // Hybrid boy: human boy face with cyan aura
+          avCtx.strokeRect(1, 1, 74, 74);
+        } else if (speaker.includes('PROTAGONIST')) {
+          // Young boy survivor -> Hybrid boy
           const isHybrid = Game.currentChapter >= 2;
-          avCtx.fillStyle = '#fed7aa'; // normal boy skin
+          avCtx.fillStyle = '#fed7aa'; // boy skin
           avCtx.beginPath();
-          avCtx.arc(34, 28, 16, 0, Math.PI * 2);
+          avCtx.arc(38, 30, 17, 0, Math.PI * 2);
           avCtx.fill();
           // Messy brown hair
           avCtx.fillStyle = '#78350f';
           avCtx.beginPath();
-          avCtx.arc(34, 22, 17, Math.PI * 0.9, Math.PI * 2.1);
+          avCtx.arc(38, 24, 18, Math.PI * 0.9, Math.PI * 2.1);
           avCtx.fill();
           // Jacket
           avCtx.fillStyle = isHybrid ? '#0284c7' : '#334155';
-          avCtx.fillRect(20, 46, 28, 22);
+          avCtx.fillRect(22, 50, 32, 26);
           if (isHybrid) {
             // Glowing cyan eyes and bio veins
             avCtx.fillStyle = '#38bdf8';
-            avCtx.fillRect(28, 27, 4, 3);
-            avCtx.fillRect(36, 27, 4, 3);
+            avCtx.fillRect(32, 29, 4, 3);
+            avCtx.fillRect(40, 29, 4, 3);
             avCtx.strokeStyle = '#38bdf8';
             avCtx.lineWidth = 3;
-            avCtx.strokeRect(0, 0, 68, 68);
+            avCtx.strokeRect(1, 1, 74, 74);
+          } else {
+            avCtx.strokeStyle = '#60a5fa';
+            avCtx.lineWidth = 3;
+            avCtx.strokeRect(1, 1, 74, 74);
           }
-        } else if (speaker === 'DR. VANCE') {
-          // Dr. Vance: older scientist, glasses, white lab coat
+        } else if (speaker.includes('VANCE')) {
+          // Dr. Arthur Vance: scientist, glasses, lab coat
           avCtx.fillStyle = '#fde68a';
           avCtx.beginPath();
-          avCtx.arc(34, 26, 16, 0, Math.PI * 2);
+          avCtx.arc(38, 28, 17, 0, Math.PI * 2);
           avCtx.fill();
           // White hair
           avCtx.fillStyle = '#cbd5e1';
           avCtx.beginPath();
-          avCtx.arc(34, 20, 17, Math.PI, 0);
+          avCtx.arc(38, 22, 18, Math.PI, 0);
           avCtx.fill();
           // Glasses
           avCtx.strokeStyle = '#0284c7';
           avCtx.lineWidth = 2;
-          avCtx.strokeRect(26, 24, 6, 5);
-          avCtx.strokeRect(36, 24, 6, 5);
+          avCtx.strokeRect(30, 26, 6, 5);
+          avCtx.strokeRect(40, 26, 6, 5);
           // Lab coat
           avCtx.fillStyle = '#f8fafc';
-          avCtx.fillRect(18, 44, 32, 24);
+          avCtx.fillRect(20, 48, 36, 28);
+          avCtx.strokeStyle = '#fbbf24';
+          avCtx.lineWidth = 3;
+          avCtx.strokeRect(1, 1, 74, 74);
         } else {
-          // Narrator icon: cosmic spiral / terminal
-          avCtx.fillStyle = '#38bdf8';
-          avCtx.font = "28px monospace";
+          // Narrator / Terminal
+          avCtx.fillStyle = '#94a3b8';
+          avCtx.font = "32px monospace";
           avCtx.textAlign = "center";
           avCtx.textBaseline = "middle";
-          avCtx.fillText("◈", 34, 34);
+          avCtx.fillText("◈", 38, 38);
+          avCtx.strokeStyle = '#334155';
+          avCtx.lineWidth = 3;
+          avCtx.strokeRect(1, 1, 74, 74);
         }
       },
 
