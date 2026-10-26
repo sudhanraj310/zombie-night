@@ -217,16 +217,16 @@
     .hud-box {
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 16px;
+      border-radius: 8px;
+      padding: 12px 18px;
       pointer-events: auto;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
     }
     .hud-bars {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      width: 260px;
+      width: 290px;
     }
     .bar-wrap {
       display: flex;
@@ -236,7 +236,7 @@
     .bar-label {
       font-size: 11px;
       font-weight: 800;
-      width: 32px;
+      width: 38px;
       color: var(--text-dim);
     }
     .bar-bg {
@@ -250,18 +250,49 @@
     .bar-fill {
       height: 100%;
       width: 100%;
-      transition: width 0.15s ease-out;
+      transition: width 0.12s ease-out;
     }
-    .bar-hp { background: linear-gradient(90deg, #e11d48, #f43f5e); }
-    .bar-energy { background: linear-gradient(90deg, #0284c7, #38bdf8); }
-    .bar-overdrive { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .bar-hp { background: linear-gradient(90deg, #e11d48, #22c55e); }
+    .bar-dash { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+    .bar-spin { background: linear-gradient(90deg, #d97706, #fbbf24); }
+
+    .hud-gun-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #38bdf8;
+      cursor: pointer;
+    }
+    .hud-buffs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .buff-tag {
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .buff-fury { background: rgba(240, 185, 79, 0.25); color: #f0b94f; border: 1px solid #f0b94f; }
+    .buff-might { background: rgba(183, 116, 255, 0.25); color: #b774ff; border: 1px solid #b774ff; }
+    .buff-guard { background: rgba(89, 205, 242, 0.25); color: #59cdf2; border: 1px solid #59cdf2; }
+    .buff-haste { background: rgba(110, 230, 142, 0.25); color: #6ee68e; border: 1px solid #6ee68e; }
 
     .hud-center {
       text-align: center;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 8px 24px;
+      border-radius: 8px;
+      padding: 10px 24px;
       pointer-events: auto;
     }
     .hud-title {
@@ -274,6 +305,7 @@
     .hud-sub {
       font-size: 11px;
       color: var(--text-dim);
+      margin-top: 2px;
     }
 
     .hud-buttons {
@@ -285,7 +317,7 @@
       background: var(--panel);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 8px 12px;
+      padding: 8px 14px;
       border-radius: 6px;
       font-size: 12px;
       font-weight: 700;
@@ -426,33 +458,47 @@
     }
     .touch-btn {
       position: absolute;
-      width: 60px;
-      height: 60px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
-      background: rgba(14, 23, 36, 0.75);
+      background: rgba(14, 23, 36, 0.85);
       border: 2px solid rgba(56, 189, 248, 0.5);
       color: #fff;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 19px;
       pointer-events: auto;
       touch-action: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      user-select: none;
     }
-    #touch-attack { bottom: 40px; right: 40px; width: 72px; height: 72px; background: rgba(244, 63, 94, 0.4); border-color: #f43f5e; }
-    #touch-skill { bottom: 125px; right: 40px; }
-    #touch-dash { bottom: 40px; right: 125px; }
-    #touch-burst { bottom: 125px; right: 125px; background: rgba(251, 191, 36, 0.4); border-color: #fbbf24; }
+    .touch-btn:active {
+      transform: scale(0.92);
+      border-color: #38bdf8;
+    }
+    .touch-btn span.btn-lbl {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-top: 1px;
+    }
+    #btn-slash { bottom: 35px; right: 35px; width: 78px; height: 78px; background: rgba(225, 29, 72, 0.45); border-color: #f43f5e; font-size: 24px; }
+    #btn-shoot { bottom: 35px; right: 125px; background: rgba(2, 132, 199, 0.45); border-color: #38bdf8; }
+    #btn-dash { bottom: 125px; right: 35px; }
+    #btn-spin { bottom: 125px; right: 125px; background: rgba(217, 119, 6, 0.45); border-color: #fbbf24; }
+    #btn-cycle { bottom: 205px; right: 80px; }
     #joystick-zone {
       position: absolute;
-      bottom: 40px;
-      left: 40px;
-      width: 130px;
-      height: 130px;
+      bottom: 35px;
+      left: 35px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      background: rgba(14, 23, 36, 0.4);
-      border: 2px dashed rgba(255,255,255,0.2);
+      background: rgba(14, 23, 36, 0.45);
+      border: 2px dashed rgba(255,255,255,0.25);
       pointer-events: auto;
       touch-action: none;
     }
@@ -460,7 +506,7 @@
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 50px; height: 50px;
+      width: 54px; height: 54px;
       border-radius: 50%;
       background: var(--accent-deep);
       border: 2px solid var(--accent);
@@ -533,13 +579,18 @@
           <div class="bar-bg"><div id="hp-fill" class="bar-fill bar-hp" style="width: 100%"></div></div>
         </div>
         <div class="bar-wrap">
-          <div class="bar-label">ENG</div>
-          <div class="bar-bg"><div id="eng-fill" class="bar-fill bar-energy" style="width: 100%"></div></div>
+          <div class="bar-label">DASH</div>
+          <div class="bar-bg"><div id="dash-fill" class="bar-fill bar-dash" style="width: 100%"></div></div>
         </div>
         <div class="bar-wrap">
-          <div class="bar-label">OVD</div>
-          <div class="bar-bg"><div id="ovd-fill" class="bar-fill bar-overdrive" style="width: 0%"></div></div>
+          <div class="bar-label">SPIN</div>
+          <div class="bar-bg"><div id="spin-fill" class="bar-fill bar-spin" style="width: 100%"></div></div>
         </div>
+        <div class="hud-gun-row" id="hud-gun-info" title="Click or tap to cycle weapons (or press Q / Left Click)">
+          <span id="hud-gun-name">GUN: PISTOL (1/1)</span>
+          <span id="hud-ammo-count">AMMO: 18</span>
+        </div>
+        <div class="hud-buffs" id="hud-buffs-list"></div>
       </div>
 
       <div class="hud-center">
@@ -567,10 +618,11 @@
     <!-- Mobile Virtual Controls -->
     <div id="mobile-controls">
       <div id="joystick-zone"><div id="joystick-knob"></div></div>
-      <div id="touch-attack" class="touch-btn">SLASH</div>
-      <div id="touch-skill" class="touch-btn">SHOT</div>
-      <div id="touch-dash" class="touch-btn">DASH</div>
-      <div id="touch-burst" class="touch-btn">BURST</div>
+      <button type="button" class="touch-btn" id="btn-cycle" title="Cycle Gun">🔄<span class="btn-lbl">GUN</span></button>
+      <button type="button" class="touch-btn" id="btn-spin" title="Spin Breaker">🌀<span class="btn-lbl">SPIN</span></button>
+      <button type="button" class="touch-btn" id="btn-dash" title="Dash">⚡<span class="btn-lbl">DASH</span></button>
+      <button type="button" class="touch-btn" id="btn-slash" title="Sword Slash">⚔️<span class="btn-lbl">SLASH</span></button>
+      <button type="button" class="touch-btn" id="btn-shoot" title="Fire Gun">🔫<span class="btn-lbl">FIRE</span></button>
     </div>
 
     <!-- Notification Banner -->
@@ -1322,7 +1374,16 @@
 
       onEnemyDefeated(enemy) {
         this.enemiesKilled++;
-        Player.addOverdrive(8);
+
+        // Loot drops (zombie-night logic)
+        if (!Player.starterGunDropped) {
+          Pickups.drop(enemy.x, enemy.y, false, 'gun');
+          Player.starterGunDropped = true;
+        } else if (Player.currentGun && Player.gunAmmo <= 6) {
+          Pickups.drop(enemy.x, enemy.y, false, 'ammo');
+        } else if (Math.random() < 0.35) {
+          Pickups.drop(enemy.x, enemy.y, false);
+        }
 
         if (this.currentChapter === 1) {
           document.getElementById('wave-tracker').innerText = `Defeated: ${this.enemiesKilled} / ${this.quotaKilled}`;
@@ -1366,7 +1427,122 @@
     };
 
     /* =====================================================================
-       PLAYER (Boy / Transformed Hybrid)
+       GUNS DEFINITION (exact zombie-night specs)
+       ===================================================================== */
+    const GUNS = {
+      pistol:     { name: 'PISTOL',       dmg: 48,  range: 370, cooldown: 20, pellets: 1, spread: 0.035, ammo: 18, color: '#fbbf24' },
+      shotgun:    { name: 'SHOTGUN',      dmg: 23,  range: 220, cooldown: 43, pellets: 5, spread: 0.25,  ammo: 10, color: '#f97316' },
+      rifle:      { name: 'RIFLE',        dmg: 74,  range: 500, cooldown: 11, pellets: 1, spread: 0.02,  ammo: 28, color: '#34d399' },
+      machinegun: { name: 'MACHINE GUN',  dmg: 25,  range: 410, cooldown:  5, pellets: 1, spread: 0.11,  ammo: 45, color: '#f87171' }
+    };
+    const GUN_ORDER = ['pistol', 'shotgun', 'rifle', 'machinegun'];
+
+    /* =====================================================================
+       PICKUPS / LOOT DROPS
+       ===================================================================== */
+    const Pickups = {
+      list: [],
+      drop(x, y, isBoss = false, forcedType = null) {
+        const pool = ['med', 'fury', 'might', 'guard', 'haste', 'ammo', 'gun'];
+        let type = forcedType || pool[Math.floor(Math.random() * pool.length)];
+        let gunKey = null;
+        if (type === 'gun') {
+          const available = GUN_ORDER.filter(k => !Player.arsenal.includes(k));
+          if (available.length === 0) { type = 'ammo'; } else {
+            gunKey = available[Math.floor(Math.random() * available.length)];
+          }
+        }
+        this.list.push({ x, y, type, gunKey, life: 420, spin: 0 });
+        if (isBoss) {
+          // bonus drop
+          const bonusPool = ['fury', 'might', 'guard', 'haste'];
+          this.list.push({ x: x + 28, y, type: bonusPool[Math.floor(Math.random() * bonusPool.length)], gunKey: null, life: 420, spin: 0 });
+        }
+      },
+      collect(drop) {
+        const labels = { med:'MED KIT', fury:'FURY', might:'MIGHT', guard:'GUARD', haste:'HASTE', ammo:'AMMO', gun:'NEW GUN' };
+        switch(drop.type) {
+          case 'med':
+            Player.hp = Math.min(Player.maxHp, Player.hp + 28);
+            Game.showBanner('MED KIT', '+28 HP');
+            break;
+          case 'fury':
+            Player.furyTimer = 420; // 7s
+            Game.showBanner('FURY', 'FAST SLASHES');
+            break;
+          case 'might':
+            Player.mightTimer = 540; // 9s
+            Game.showBanner('MIGHT', '+65% DAMAGE');
+            break;
+          case 'guard':
+            Player.guardTimer = 540;
+            Game.showBanner('GUARD', '58% LESS DAMAGE');
+            break;
+          case 'haste':
+            Player.hasteTimer = 540;
+            Game.showBanner('HASTE', '+28% SPEED');
+            break;
+          case 'ammo':
+            if (Player.currentGun) {
+              const add = 8 + Math.floor(Math.random() * 11);
+              Player.gunAmmo = Math.min(GUNS[Player.currentGun].ammo * 2, Player.gunAmmo + add);
+            }
+            break;
+          case 'gun':
+            if (drop.gunKey && !Player.arsenal.includes(drop.gunKey)) {
+              Player.arsenal.push(drop.gunKey);
+              if (!Player.currentGun) { Player.currentGun = drop.gunKey; Player.gunAmmo = GUNS[drop.gunKey].ammo; Player.gunCooldown = 0; }
+              Game.showBanner('NEW GUN', GUNS[drop.gunKey].name + ' ACQUIRED');
+            }
+            break;
+        }
+        Sound.hit();
+        Player.updateHUD();
+      },
+      update() {
+        for (let i = this.list.length - 1; i >= 0; i--) {
+          const d = this.list[i];
+          d.life--;
+          d.spin += 0.04;
+          // Collect if player overlaps
+          if (Math.hypot(Player.x - d.x, Player.y - d.y) < Player.radius + 18) {
+            this.collect(d);
+            this.list.splice(i, 1);
+            continue;
+          }
+          if (d.life <= 0) this.list.splice(i, 1);
+        }
+      },
+      draw() {
+        const colorMap = { med:'#22c55e', fury:'#f59e0b', might:'#ef4444', guard:'#3b82f6', haste:'#a855f7', ammo:'#94a3b8', gun:'#fbbf24' };
+        const iconMap  = { med:'➕', fury:'⚡', might:'💥', guard:'🛡', haste:'💨', ammo:'🔹', gun:'🔫' };
+        for (let d of this.list) {
+          const alpha = Math.min(1, d.life / 60);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(d.x, d.y);
+          ctx.rotate(d.spin);
+          ctx.shadowColor = colorMap[d.type];
+          ctx.shadowBlur = 14;
+          ctx.strokeStyle = colorMap[d.type];
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(-14, -14, 28, 28);
+          ctx.fillStyle = 'rgba(9,14,21,0.72)';
+          ctx.fillRect(-14, -14, 28, 28);
+          ctx.restore();
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.font = '15px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(iconMap[d.type], d.x, d.y);
+          ctx.restore();
+        }
+      }
+    };
+
+    /* =====================================================================
+       PLAYER (Boy / Transformed Hybrid) — zombie-night compatible
        ===================================================================== */
     const Player = {
       x: 0,
@@ -1375,161 +1551,211 @@
       speed: 4.8,
       hp: 100,
       maxHp: 100,
-      energy: 100,
-      maxEnergy: 100,
-      overdrive: 0,
-      maxOverdrive: 100,
       isHybrid: false,
-
       angle: 0,
+
+      // Sword combo
       comboStep: 0,
       comboTimer: 0,
-      isAttacking: false,
       attackCooldown: 0,
 
+      // Dash
       isDashing: false,
-      dashTimer: 0,
+      dashFrames: 0,
+      dashCooldown: 0,
       dashDirX: 0,
       dashDirY: 0,
 
-      overdriveActive: false,
-      overdriveTimer: 0,
+      // Spin-Breaker
+      spinCooldown: 0,
+
+      // Buffs (frame counters)
+      furyTimer: 0,
+      mightTimer: 0,
+      guardTimer: 0,
+      hasteTimer: 0,
+
+      // Gun system
+      currentGun: null,
+      arsenal: [],
+      gunIndex: 0,
+      gunAmmo: 0,
+      gunCooldown: 0,
+
+      // Loot state
+      starterGunDropped: false,
 
       resetForChapter(ch) {
         this.x = canvas.width / 2;
         this.y = canvas.height / 2;
         this.hp = 100;
-        this.energy = 100;
-        this.overdrive = ch >= 2 ? 40 : 0;
         this.isHybrid = ch >= 2;
-        this.speed = this.isHybrid ? 6.0 : 4.5;
+        this.speed = this.isHybrid ? 5.8 : 4.5;
+        this.isDashing = false; this.dashFrames = 0; this.dashCooldown = 0;
+        this.spinCooldown = 0;
+        this.comboStep = 0; this.comboTimer = 0; this.attackCooldown = 0;
+        this.furyTimer = 0; this.mightTimer = 0; this.guardTimer = 0; this.hasteTimer = 0;
+        this.currentGun = null; this.arsenal = []; this.gunIndex = 0; this.gunAmmo = 0; this.gunCooldown = 0;
+        this.starterGunDropped = false;
+        Pickups.list = [];
         this.updateHUD();
       },
 
       update() {
         if (Game.state !== 'PLAYING') return;
 
-        // Energy Regen
-        if (this.energy < this.maxEnergy) {
-          this.energy = Math.min(this.maxEnergy, this.energy + (this.isHybrid ? 0.45 : 0.25));
-        }
+        // Buff timers
+        if (this.furyTimer > 0) this.furyTimer--;
+        if (this.mightTimer > 0) this.mightTimer--;
+        if (this.guardTimer > 0) this.guardTimer--;
+        if (this.hasteTimer > 0) this.hasteTimer--;
 
-        // Overdrive decay / active timer
-        if (this.overdriveActive) {
-          this.overdriveTimer--;
-          this.overdrive = (this.overdriveTimer / 360) * 100;
-          if (this.overdriveTimer <= 0) {
-            this.overdriveActive = false;
-            this.overdrive = 0;
-          }
-        }
-
-        // Combo reset timer
-        if (this.comboTimer > 0) {
-          this.comboTimer--;
-          if (this.comboTimer <= 0) this.comboStep = 0;
-        }
+        // Cooldowns
         if (this.attackCooldown > 0) this.attackCooldown--;
+        if (this.dashCooldown > 0) this.dashCooldown--;
+        if (this.spinCooldown > 0) this.spinCooldown--;
+        if (this.gunCooldown > 0) this.gunCooldown--;
 
-        // Dashing Movement
+        // Combo reset
+        if (this.comboTimer > 0) { this.comboTimer--; if (this.comboTimer <= 0) this.comboStep = 0; }
+
+        // Dashing
         if (this.isDashing) {
           this.x += this.dashDirX * 13;
           this.y += this.dashDirY * 13;
-          this.dashTimer--;
+          this.dashFrames--;
           Particles.spawnDashGhost(this.x, this.y, this.angle, this.isHybrid);
-          if (this.dashTimer <= 0) this.isDashing = false;
+          if (this.dashFrames <= 0) this.isDashing = false;
+          this.clamp();
           return;
         }
 
-        // Normal Movement
+        // Auto-fire when Shift held
+        if ((Input.keys['Shift'] || Input.keys['ShiftLeft'] || Input.keys['ShiftRight']) && Game.state === 'PLAYING') {
+          this.fireGun();
+        }
+
+        // Movement
         let dx = 0, dy = 0;
         if (Input.keys['w'] || Input.keys['W'] || Input.keys['ArrowUp']) dy -= 1;
         if (Input.keys['s'] || Input.keys['S'] || Input.keys['ArrowDown']) dy += 1;
         if (Input.keys['a'] || Input.keys['A'] || Input.keys['ArrowLeft']) dx -= 1;
         if (Input.keys['d'] || Input.keys['D'] || Input.keys['ArrowRight']) dx += 1;
-
-        if (Input.joystick.active) {
-          dx = Input.joystick.x;
-          dy = Input.joystick.y;
-        }
+        if (Input.joystick.active) { dx = Input.joystick.x; dy = Input.joystick.y; }
 
         if (dx !== 0 || dy !== 0) {
           const len = Math.hypot(dx, dy);
-          const spd = (this.overdriveActive ? this.speed * 1.4 : this.speed);
+          let spd = this.speed * (this.hasteTimer > 0 ? 1.28 : 1);
           this.x += (dx / len) * spd;
           this.y += (dy / len) * spd;
         }
 
-        // Angle facing cursor
-        this.angle = Math.atan2(Input.mouseY - this.y, Input.mouseX - this.x);
+        // Auto-aim: lock to nearest enemy within 300px, else mouse
+        let aimX = Input.mouseX, aimY = Input.mouseY;
+        let nearest = null, nearDist = 300;
+        for (let e of Enemies.list) {
+          const d = Math.hypot(e.x - this.x, e.y - this.y);
+          if (d < nearDist) { nearDist = d; nearest = e; }
+        }
+        if (Boss.active) {
+          const bd = Math.hypot(Boss.x - this.x, Boss.y - this.y);
+          if (bd < nearDist) { nearest = Boss; }
+        }
+        if (nearest) { aimX = nearest.x; aimY = nearest.y; }
+        this.angle = Math.atan2(aimY - this.y, aimX - this.x);
 
-        // Keep inside bounds
+        this.clamp();
+        this.updateHUD();
+      },
+
+      clamp() {
         const pad = 30;
         this.x = Math.max(pad, Math.min(canvas.width - pad, this.x));
         this.y = Math.max(pad, Math.min(canvas.height - pad, this.y));
-
-        this.updateHUD();
       },
 
       attack() {
         if (this.attackCooldown > 0) return;
+        const cd = this.furyTimer > 0 ? 8 : 14;
         this.comboStep = (this.comboStep % 3) + 1;
         this.comboTimer = 35;
-        this.attackCooldown = 14;
-
+        this.attackCooldown = cd;
         Sound.slash();
         Game.shake = 4;
 
-        // Perform Melee Swing
         const range = this.isHybrid ? 78 : 55;
         const arc = Math.PI * 0.7;
-        const dmg = (this.isHybrid ? 42 : 25) * (this.overdriveActive ? 2 : 1);
+        let dmg = (this.isHybrid ? 42 : 25);
+        if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
 
-        // Check hit against enemies
         for (let e of Enemies.list) {
           const dist = Math.hypot(e.x - this.x, e.y - this.y);
           if (dist < range + e.radius) {
             const angleTo = Math.atan2(e.y - this.y, e.x - this.x);
             let diff = Math.abs(angleTo - this.angle);
             while (diff > Math.PI) diff = Math.PI * 2 - diff;
-            if (diff < arc / 2) {
-              e.takeDamage(dmg, Math.cos(this.angle) * 8, Math.sin(this.angle) * 8);
-            }
+            if (diff < arc / 2) e.takeDamage(dmg, Math.cos(this.angle) * 8, Math.sin(this.angle) * 8);
           }
         }
-
-        // Hit Boss
-        if (Boss.active) {
-          const dist = Math.hypot(Boss.x - this.x, Boss.y - this.y);
-          if (dist < range + Boss.radius) {
-            Boss.takeDamage(dmg);
-          }
-        }
-
-        // Melee slash visual arc
+        if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range + Boss.radius) Boss.takeDamage(dmg);
         Particles.spawnSlashArc(this.x, this.y, this.angle, range, this.isHybrid, this.comboStep);
       },
 
-      shootSkill() {
-        if (this.energy < 20) return;
-        this.energy -= 20;
+      fireGun() {
+        if (!this.currentGun || this.gunAmmo <= 0 || this.gunCooldown > 0) return;
+        const g = GUNS[this.currentGun];
+        this.gunCooldown = g.cooldown;
+        this.gunAmmo--;
         Sound.blaster();
-        Game.shake = 3;
+        Game.shake = 2;
 
-        if (this.isHybrid) {
-          // Bio-Kinetic Pierce Beam
-          Projectiles.spawn(this.x, this.y, this.angle, 16, 50, 'HYBRID_BLASTER');
-        } else {
-          // Handgun shot
-          Projectiles.spawn(this.x, this.y, this.angle + (Math.random()-0.5)*0.1, 14, 28, 'BULLET');
+        for (let i = 0; i < g.pellets; i++) {
+          const spread = (Math.random() - 0.5) * g.spread;
+          const ang = this.angle + spread;
+          const spd = g.range / 35;
+          const life = Math.floor(g.range / spd);
+          let dmg = g.dmg;
+          if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
+          this.spawnPlayerBullet(this.x, this.y, ang, spd, dmg, life);
         }
+        this.updateHUD();
+      },
+
+      spawnPlayerBullet(x, y, angle, speed, dmg, life) {
+        Projectiles.list.push({
+          x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+          dmg, type: 'BULLET', life, maxLife: life, angle, isPlayer: true
+        });
+      },
+
+      spinBreaker() {
+        if (this.spinCooldown > 0) return;
+        this.spinCooldown = 264; // 4.4s
+        Sound.overdrive();
+        Game.shake = 14;
+        Game.flashAlpha = 0.5;
+        Game.flashColor = '#38bdf8';
+
+        const range = this.isHybrid ? 220 : 160;
+        let dmg = this.isHybrid ? 110 : 70;
+        if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
+
+        for (let e of Enemies.list) {
+          const d = Math.hypot(e.x - this.x, e.y - this.y);
+          if (d < range) {
+            const ang = Math.atan2(e.y - this.y, e.x - this.x);
+            e.takeDamage(dmg, Math.cos(ang) * 12, Math.sin(ang) * 12);
+          }
+        }
+        if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range) Boss.takeDamage(dmg);
+        Particles.spawnShockwave(this.x, this.y, this.isHybrid ? '#38bdf8' : '#94a3b8', range);
       },
 
       dash() {
-        if (this.isDashing || this.energy < 25) return;
-        this.energy -= 25;
+        if (this.isDashing || this.dashCooldown > 0) return;
         this.isDashing = true;
-        this.dashTimer = 10;
+        this.dashFrames = 9;
+        this.dashCooldown = 66; // ~1.1s
         Sound.dash();
 
         let dx = 0, dy = 0;
@@ -1538,79 +1764,80 @@
         if (Input.keys['a'] || Input.keys['A'] || Input.keys['ArrowLeft']) dx -= 1;
         if (Input.keys['d'] || Input.keys['D'] || Input.keys['ArrowRight']) dx += 1;
         if (Input.joystick.active) { dx = Input.joystick.x; dy = Input.joystick.y; }
-
-        if (dx === 0 && dy === 0) {
-          dx = Math.cos(this.angle);
-          dy = Math.sin(this.angle);
-        }
+        if (dx === 0 && dy === 0) { dx = Math.cos(this.angle); dy = Math.sin(this.angle); }
         const len = Math.hypot(dx, dy);
         this.dashDirX = dx / len;
         this.dashDirY = dy / len;
       },
 
-      activateOverdrive() {
-        if (this.overdrive < 100 || this.overdriveActive) return;
-        this.overdriveActive = true;
-        this.overdriveTimer = 360; // 6 seconds of intense power
-        Sound.overdrive();
-        Game.shake = 15;
-        Game.flashAlpha = 0.6;
-        Game.flashColor = '#38bdf8';
-
-        // Shockwave burst
-        for (let e of Enemies.list) {
-          const d = Math.hypot(e.x - this.x, e.y - this.y);
-          if (d < 240) {
-            e.takeDamage(90, Math.cos(Math.atan2(e.y - this.y, e.x - this.x)) * 14, Math.sin(Math.atan2(e.y - this.y, e.x - this.x)) * 14);
-          }
-        }
-        if (Boss.active) {
-          const d = Math.hypot(Boss.x - this.x, Boss.y - this.y);
-          if (d < 240) Boss.takeDamage(120);
-        }
-        Particles.spawnShockwave(this.x, this.y, '#38bdf8', 260);
+      cycleWeapon() {
+        if (this.arsenal.length < 2) return;
+        this.gunIndex = (this.gunIndex + 1) % this.arsenal.length;
+        this.currentGun = this.arsenal[this.gunIndex];
+        this.gunAmmo = GUNS[this.currentGun].ammo;
+        this.gunCooldown = 0;
+        Sound.dash();
+        this.updateHUD();
       },
 
       takeDamage(amount) {
-        if (this.isDashing) return; // Invulnerable while dashing
-        this.hp -= amount;
+        if (this.isDashing) return;
+        let dmg = this.guardTimer > 0 ? Math.floor(amount * 0.42) : amount;
+        this.hp -= dmg;
         Sound.hit();
         Game.shake = 8;
         Game.flashAlpha = 0.3;
         Game.flashColor = '#e11d48';
-
         if (this.hp <= 0) {
           this.hp = 0;
-          // Game Over / Retry
           Game.showBanner("CRITICAL INJURY", "RETRYING MISSION...");
-          setTimeout(() => {
-            Game.loadChapter(Game.currentChapter);
-          }, 1500);
+          setTimeout(() => { Game.loadChapter(Game.currentChapter); }, 1500);
         }
       },
 
-      addOverdrive(amt) {
-        if (!this.overdriveActive) {
-          this.overdrive = Math.min(this.maxOverdrive, this.overdrive + amt);
-        }
-      },
+      // kept for backward-compat with overdrive calls (no-op now)
+      addOverdrive() {},
 
       updateHUD() {
         document.getElementById('hp-fill').style.width = `${Math.max(0, (this.hp / this.maxHp) * 100)}%`;
-        document.getElementById('eng-fill').style.width = `${Math.max(0, (this.energy / this.maxEnergy) * 100)}%`;
-        document.getElementById('ovd-fill').style.width = `${Math.max(0, (this.overdrive / this.maxOverdrive) * 100)}%`;
+
+        // DASH bar: 0 = cooling down, 100 = ready
+        const dashPct = this.dashCooldown > 0 ? Math.max(0, (1 - this.dashCooldown / 66) * 100) : 100;
+        document.getElementById('dash-fill').style.width = `${dashPct}%`;
+
+        // SPIN bar
+        const spinPct = this.spinCooldown > 0 ? Math.max(0, (1 - this.spinCooldown / 264) * 100) : 100;
+        document.getElementById('spin-fill').style.width = `${spinPct}%`;
+
+        // Gun row
+        if (this.currentGun) {
+          const g = GUNS[this.currentGun];
+          document.getElementById('hud-gun-name').innerText = `GUN: ${g.name} (${this.gunIndex + 1}/${this.arsenal.length})`;
+          document.getElementById('hud-ammo-count').innerText = `AMMO: ${this.gunAmmo}`;
+          document.getElementById('hud-gun-info').style.display = 'flex';
+        } else {
+          document.getElementById('hud-gun-info').style.display = 'none';
+        }
+
+        // Buff tags
+        const bl = document.getElementById('hud-buffs-list');
+        let html = '';
+        if (this.furyTimer  > 0) html += `<span class="buff-tag buff-fury">FURY ${Math.ceil(this.furyTimer/60)}s</span>`;
+        if (this.mightTimer > 0) html += `<span class="buff-tag buff-might">MIGHT ${Math.ceil(this.mightTimer/60)}s</span>`;
+        if (this.guardTimer > 0) html += `<span class="buff-tag buff-guard">GUARD ${Math.ceil(this.guardTimer/60)}s</span>`;
+        if (this.hasteTimer > 0) html += `<span class="buff-tag buff-haste">HASTE ${Math.ceil(this.hasteTimer/60)}s</span>`;
+        bl.innerHTML = html;
       },
 
       draw() {
         ctx.save();
         ctx.translate(this.x, this.y);
 
-        // Hybrid Aura & Overdrive VFX
         if (this.isHybrid) {
-          const auraGlow = this.overdriveActive ? 30 : 15;
+          const auraGlow = this.spinCooldown === 0 ? 30 : 15;
           ctx.beginPath();
           ctx.arc(0, 0, this.radius + 6, 0, Math.PI * 2);
-          ctx.fillStyle = this.overdriveActive ? 'rgba(56, 189, 248, 0.45)' : 'rgba(56, 189, 248, 0.18)';
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.18)';
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = auraGlow;
           ctx.fill();
@@ -1618,8 +1845,6 @@
 
         ctx.rotate(this.angle);
 
-        // Character Stickman Rendering
-        // Body / Torso
         ctx.fillStyle = this.isHybrid ? '#0284c7' : '#334155';
         ctx.beginPath();
         ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
@@ -1628,34 +1853,19 @@
         ctx.strokeStyle = this.isHybrid ? '#38bdf8' : '#64748b';
         ctx.stroke();
 
-        // Hands & Weapon
         if (this.isHybrid) {
-          // Dual Glowing Azure Energy Blades
           ctx.strokeStyle = '#38bdf8';
           ctx.shadowColor = '#38bdf8';
           ctx.shadowBlur = 12;
           ctx.lineWidth = 4;
-          // Right blade
-          ctx.beginPath();
-          ctx.moveTo(12, 10);
-          ctx.lineTo(36, 14);
-          ctx.stroke();
-          // Left blade
-          ctx.beginPath();
-          ctx.moveTo(12, -10);
-          ctx.lineTo(32, -12);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(12, 10); ctx.lineTo(36, 14); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(12, -10); ctx.lineTo(32, -12); ctx.stroke();
         } else {
-          // Makeshift Steel Pipe
           ctx.strokeStyle = '#94a3b8';
           ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(10, 8);
-          ctx.lineTo(28, 12);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(10, 8); ctx.lineTo(28, 12); ctx.stroke();
         }
 
-        // Eyes
         ctx.fillStyle = this.isHybrid ? '#ffffff' : '#000000';
         ctx.shadowBlur = this.isHybrid ? 8 : 0;
         ctx.beginPath();
@@ -1845,6 +2055,9 @@
         if (this.hp <= 0) {
           this.active = false;
           document.getElementById('boss-hud').style.display = 'none';
+          // Boss loot drops
+          Pickups.drop(this.x - 18, this.y, true, 'gun');
+          Pickups.drop(this.x + 18, this.y, true);
           Game.onBossDefeated(this.type);
         }
       },
@@ -2006,7 +2219,7 @@
           p.life--;
 
           // Collisions
-          if (p.type === 'BULLET' || p.type === 'HYBRID_BLASTER') {
+          if (p.type === 'BULLET' || p.type === 'HYBRID_BLASTER' || p.isPlayer) {
             // Hit Enemies
             for (let e of Enemies.list) {
               if (Math.hypot(e.x - p.x, e.y - p.y) < e.radius + 8) {
@@ -2171,19 +2384,18 @@
       init() {
         window.addEventListener('keydown', e => {
           this.keys[e.key] = true;
-          if (e.key === ' ' || e.key === 'Enter') {
-            if (Game.state === 'STORY') {
-              Game.advanceDialogue();
-              e.preventDefault();
-            } else if (e.key === ' ') {
-              Player.dash();
-            }
+
+          if (Game.state === 'STORY') {
+            if (e.key === ' ' || e.key === 'Enter') { Game.advanceDialogue(); e.preventDefault(); }
+            return;
           }
-          if (e.key === 'Escape') UI.toggleMenu();
-          if (e.key === 'j' || e.key === 'J') Player.attack();
-          if (e.key === 'k' || e.key === 'K') Player.shootSkill();
-          if (e.key === 'l' || e.key === 'L') Player.dash();
-          if (e.key === 'f' || e.key === 'F' || e.key === 'e' || e.key === 'E') Player.activateOverdrive();
+
+          // Gameplay controls
+          if (e.key === 'Enter') Player.attack();
+          if (e.key === ' ') { Player.dash(); e.preventDefault(); }
+          if (e.key === 'e' || e.key === 'E') Player.spinBreaker();
+          if (e.key === 'q' || e.key === 'Q') Player.cycleWeapon();
+          if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') UI.toggleMenu();
         });
 
         window.addEventListener('keyup', e => {
@@ -2197,12 +2409,8 @@
 
         window.addEventListener('mousedown', e => {
           Sound.init();
-          if (Game.state === 'STORY') {
-            Game.advanceDialogue();
-            return;
-          }
-          if (e.button === 0) Player.attack();
-          if (e.button === 2) Player.shootSkill();
+          if (Game.state === 'STORY') { Game.advanceDialogue(); return; }
+          if (e.button === 0) Player.cycleWeapon();
         });
 
         window.addEventListener('contextmenu', e => e.preventDefault());
@@ -2242,10 +2450,11 @@
         zone.addEventListener('touchend', resetJoy);
         zone.addEventListener('touchcancel', resetJoy);
 
-        document.getElementById('touch-attack').addEventListener('touchstart', e => { e.preventDefault(); Player.attack(); });
-        document.getElementById('touch-skill').addEventListener('touchstart', e => { e.preventDefault(); Player.shootSkill(); });
-        document.getElementById('touch-dash').addEventListener('touchstart', e => { e.preventDefault(); Player.dash(); });
-        document.getElementById('touch-burst').addEventListener('touchstart', e => { e.preventDefault(); Player.activateOverdrive(); });
+        document.getElementById('btn-slash').addEventListener('touchstart', e => { e.preventDefault(); Player.attack(); });
+        document.getElementById('btn-shoot').addEventListener('touchstart', e => { e.preventDefault(); Player.fireGun(); });
+        document.getElementById('btn-dash').addEventListener('touchstart', e => { e.preventDefault(); Player.dash(); });
+        document.getElementById('btn-spin').addEventListener('touchstart', e => { e.preventDefault(); Player.spinBreaker(); });
+        document.getElementById('btn-cycle').addEventListener('touchstart', e => { e.preventDefault(); Player.cycleWeapon(); });
       },
 
       handleJoystickMove(cx, cy, knob) {
@@ -2346,11 +2555,13 @@
         Enemies.update();
         Boss.update();
         Projectiles.update();
+        Pickups.update();
         Particles.update();
       }
 
       Particles.draw();
       Enemies.draw();
+      Pickups.draw();
       Boss.draw();
       Player.draw();
       Projectiles.draw();
