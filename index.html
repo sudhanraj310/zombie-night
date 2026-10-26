@@ -265,11 +265,12 @@
       align-items: flex-start;
     }
     #avatarCanvas {
-      width: 72px;
-      height: 72px;
-      border-radius: 10px;
-      background: #0f172a;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      background: #0b111a;
+      border: 2px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
       flex-shrink: 0;
     }
     .dialogue-text {
@@ -552,7 +553,7 @@
         </div>
       </div>
       <div class="dialogue-body">
-        <canvas id="avatarCanvas" width="72" height="72"></canvas>
+        <canvas id="avatarCanvas" width="120" height="120"></canvas>
         <div class="dialogue-text" id="dialogue-text">...</div>
       </div>
       <div class="dialogue-footer">
@@ -1445,7 +1446,117 @@
     /* =====================================================================
        ZERO-LAG SYNTHESIZER AUDIO SYSTEM
        ===================================================================== */
-    const Sound = {
+
+    /* =====================================================================
+       EMOTIONAL TEXT-TO-SPEECH (TTS) VOICE ENGINE
+       ===================================================================== */
+    const VoiceSystem = {
+      enabled: true,
+      synth: window.speechSynthesis,
+      currentUtterance: null,
+      cachedVoices: [],
+
+      init() {
+        if (!('speechSynthesis' in window)) {
+          this.enabled = false;
+          return;
+        }
+        const load = () => {
+          this.cachedVoices = this.synth.getVoices();
+        };
+        load();
+        if (this.synth.onvoiceschanged !== undefined) {
+          this.synth.onvoiceschanged = load;
+        }
+      },
+
+      stop() {
+        if (this.synth && this.synth.speaking) {
+          this.synth.cancel();
+        }
+      },
+
+      speak(text, speaker, mood = 'normal') {
+        if (!this.enabled || !this.synth) return;
+        this.stop();
+
+        // Strip quotes or narration marks for cleaner audio
+        const cleanText = text.replace(/["*]/g, '').trim();
+        const utter = new SpeechSynthesisUtterance(cleanText);
+
+        // Character specific voice pitch, rate, and timbre profile
+        let pitch = 1.0;
+        let rate = 1.0;
+        let volume = 1.0;
+
+        const speakerUpper = speaker.toUpperCase();
+
+        if (speakerUpper.includes('BLUE ZOMBIE') || speakerUpper.includes('SOVEREIGN')) {
+          // Cold, majestic, deep, terrifyingly calm
+          pitch = 0.65;
+          rate = 0.85;
+          volume = 1.0;
+        } else if (speakerUpper.includes('AGENT X')) {
+          // Aristocratic, refined, silky, calculating, slightly higher pitch
+          pitch = 0.95;
+          rate = 0.95;
+          volume = 0.95;
+        } else if (speakerUpper.includes('VANCE')) {
+          // Elderly, weathered, raspy, sorrowful
+          pitch = 0.8;
+          rate = 0.9;
+        } else if (speakerUpper.includes('MAYA')) {
+          // Warm, feminine, emotional, gentle
+          pitch = 1.25;
+          rate = 0.95;
+        } else if (speakerUpper.includes('KAEL')) {
+          // Hardened, gruff, military
+          pitch = 0.85;
+          rate = 1.05;
+        } else if (speakerUpper.includes('NARRATOR')) {
+          // Cinematic, neutral, deep documentary tone
+          pitch = 0.9;
+          rate = 0.92;
+        } else {
+          // Zest: Determined, heroic, youthful
+          pitch = 1.05;
+          rate = 1.0;
+        }
+
+        // Apply scene emotion modifiers
+        if (mood === 'tense' || mood === 'menacing') {
+          rate *= 0.95;
+          pitch *= 0.95;
+        } else if (mood === 'grief') {
+          rate *= 0.85;
+          pitch *= 0.9;
+        } else if (mood === 'resolute') {
+          rate *= 1.05;
+          pitch *= 1.05;
+          volume = 1.0;
+        }
+
+        utter.pitch = pitch;
+        utter.rate = rate;
+        utter.volume = volume;
+
+        // Try to pick an appropriate English voice
+        if (this.cachedVoices.length > 0) {
+          if (speakerUpper.includes('MAYA')) {
+            const femaleVoice = this.cachedVoices.find(v => (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Google UK English Female') || v.name.includes('Victoria')) && v.lang.startsWith('en'));
+            if (femaleVoice) utter.voice = femaleVoice;
+          } else {
+            const maleVoice = this.cachedVoices.find(v => (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Google UK English Male') || v.name.includes('George') || v.name.includes('Alex')) && v.lang.startsWith('en'));
+            if (maleVoice) utter.voice = maleVoice;
+          }
+        }
+
+        this.currentUtterance = utter;
+        this.synth.speak(utter);
+      }
+    };
+
+        const Sound = {
       ctx: null,
       enabled: true,
       init() {
@@ -2673,6 +2784,7 @@
 
       init() {
         UI.init();
+        VoiceSystem.init();
         Input.init();
         this.loadChapter(1);
         requestAnimationFrame(loop);
@@ -2751,7 +2863,8 @@
         cutsceneBox.style.borderLeftColor = item.theme || '#38bdf8';
         cutsceneBox.style.boxShadow = `0 16px 50px rgba(0,0,0,0.85), 0 0 30px ${item.theme || '#38bdf8'}33`;
 
-        this.renderAvatar(item.speaker, item.theme);
+        this.renderAvatar(item.speaker, item.theme, item.mood);
+        VoiceSystem.speak(item.text, item.speaker, item.mood || 'normal');
 
         const textEl = document.getElementById('dialogue-text');
         textEl.innerText = "";
@@ -2771,6 +2884,7 @@
       },
 
       advanceDialogue() {
+        VoiceSystem.stop();
         if (this.charIndex < this.dialogueTextTarget.length) {
           clearInterval(this.dialogueTimer);
           document.getElementById('dialogue-text').innerText = this.dialogueTextTarget;
@@ -2782,57 +2896,336 @@
       },
 
       endCutscene() {
+        VoiceSystem.stop();
         if (this.dialogueTimer) clearInterval(this.dialogueTimer);
         document.getElementById('cutscene-ui').style.display = 'none';
         if (this.onCutsceneFinish) this.onCutsceneFinish();
       },
 
-      renderAvatar(name, themeColor = '#38bdf8') {
-        avCtx.clearRect(0, 0, 72, 72);
-        avCtx.fillStyle = '#090e15';
-        avCtx.fillRect(0, 0, 72, 72);
+      renderAvatar(name, themeColor = '#38bdf8', mood = 'normal') {
+        avCtx.clearRect(0, 0, 120, 120);
+        
+        // Portrait background gradient
+        const bgGrad = avCtx.createRadialGradient(60, 60, 10, 60, 60, 60);
+        bgGrad.addColorStop(0, '#111827');
+        bgGrad.addColorStop(1, '#05080f');
+        avCtx.fillStyle = bgGrad;
+        avCtx.fillRect(0, 0, 120, 120);
 
         avCtx.save();
-        avCtx.translate(36, 36);
+        avCtx.translate(60, 60);
 
-        if (name.includes('Blue Zombie') || name.includes('SOVEREIGN')) {
-          avCtx.fillStyle = '#22d3ee';
-          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#ffffff';
-          avCtx.fillRect(-10, -6, 6, 4); avCtx.fillRect(4, -6, 6, 4);
+        const upper = name.toUpperCase();
+
+        if (upper.includes('BLUE ZOMBIE') || upper.includes('SOVEREIGN')) {
+          // CANONICAL BLUE ZOMBIE: Striking handsome human features, pale blue skin, gray shirt, piercing cyan eyes
+          // Azure telekinetic aura
+          avCtx.shadowColor = '#38bdf8';
+          avCtx.shadowBlur = 20;
+          avCtx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+          avCtx.beginPath(); avCtx.arc(0, -4, 40, 0, Math.PI * 2); avCtx.fill();
+          avCtx.shadowBlur = 0;
+
+          // Gray t-shirt collar & shoulders
           avCtx.fillStyle = '#64748b';
-          avCtx.fillRect(-14, 12, 28, 12);
-        } else if (name.includes('Agent X')) {
+          avCtx.beginPath();
+          avCtx.moveTo(-38, 55);
+          avCtx.lineTo(-24, 18);
+          avCtx.lineTo(24, 18);
+          avCtx.lineTo(38, 55);
+          avCtx.closePath();
+          avCtx.fill();
+          // Neck
+          avCtx.fillStyle = '#67e8f9';
+          avCtx.fillRect(-10, 8, 20, 18);
+
+          // Head & Jaw
+          avCtx.fillStyle = '#22d3ee'; // Pale Blue Skin
+          avCtx.beginPath();
+          avCtx.ellipse(0, -6, 26, 32, 0, 0, Math.PI * 2);
+          avCtx.fill();
+
+          // Composed, stylish dark hair
           avCtx.fillStyle = '#0f172a';
-          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#881337';
-          avCtx.fillRect(-6, 2, 12, 22);
-          avCtx.fillStyle = '#ffe4e6';
-          avCtx.beginPath(); avCtx.arc(0, -4, 14, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#0f172a';
-          avCtx.beginPath(); avCtx.arc(0, -10, 14, Math.PI, Math.PI * 2); avCtx.fill();
-        } else if (name.includes('Dr.') || name.includes('Vance')) {
-          avCtx.fillStyle = '#334155';
-          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#fde047';
-          avCtx.beginPath(); avCtx.arc(0, -4, 14, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#94a3b8';
-          avCtx.fillRect(-12, -8, 24, 3);
-        } else if (name.includes('Maya')) {
-          avCtx.fillStyle = '#f472b6';
-          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#fed7aa';
-          avCtx.beginPath(); avCtx.arc(0, -2, 14, 0, Math.PI * 2); avCtx.fill();
-          avCtx.fillStyle = '#7c2d12';
-          avCtx.beginPath(); avCtx.arc(0, -6, 16, Math.PI * 0.9, Math.PI * 2.1); avCtx.fill();
-        } else {
-          // Zest / Narrator
-          avCtx.fillStyle = themeColor;
-          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
+          avCtx.beginPath();
+          avCtx.moveTo(-28, -12);
+          avCtx.quadraticCurveTo(-20, -42, 4, -40);
+          avCtx.quadraticCurveTo(28, -36, 28, -10);
+          avCtx.quadraticCurveTo(20, -24, 0, -28);
+          avCtx.quadraticCurveTo(-18, -26, -28, -12);
+          avCtx.closePath();
+          avCtx.fill();
+
+          // Piercing, calm cyan glowing eyes
           avCtx.fillStyle = '#ffffff';
-          avCtx.beginPath(); avCtx.arc(-6, -4, 3, 0, Math.PI * 2); avCtx.fill();
-          avCtx.beginPath(); avCtx.arc(6, -4, 3, 0, Math.PI * 2); avCtx.fill();
+          avCtx.shadowColor = '#06b6d4';
+          avCtx.shadowBlur = 10;
+          avCtx.fillRect(-15, -8, 8, 4);
+          avCtx.fillRect(7, -8, 8, 4);
+          avCtx.fillStyle = '#0891b2';
+          avCtx.fillRect(-13, -8, 4, 4);
+          avCtx.fillRect(9, -8, 4, 4);
+          avCtx.shadowBlur = 0;
+
+          // Calm arrogant smirk
+          avCtx.strokeStyle = '#0e7490';
+          avCtx.lineWidth = 2;
+          avCtx.beginPath();
+          avCtx.moveTo(-6, 12);
+          avCtx.quadraticCurveTo(2, 14, 8, 10);
+          avCtx.stroke();
+
+        } else if (upper.includes('AGENT X')) {
+          // CANONICAL AGENT X: Pale aristocrat, dark slick hair, black coat, burgundy vest, white collar
+          // Burgundy shadow aura
+          avCtx.shadowColor = '#9333ea';
+          avCtx.shadowBlur = 16;
+          avCtx.fillStyle = 'rgba(147, 51, 234, 0.2)';
+          avCtx.beginPath(); avCtx.arc(0, -4, 38, 0, Math.PI * 2); avCtx.fill();
+          avCtx.shadowBlur = 0;
+
+          // Tailored Black Coat
+          avCtx.fillStyle = '#090d16';
+          avCtx.beginPath();
+          avCtx.moveTo(-36, 55); avCtx.lineTo(-24, 18); avCtx.lineTo(24, 18); avCtx.lineTo(36, 55);
+          avCtx.closePath(); avCtx.fill();
+
+          // Burgundy vest
+          avCtx.fillStyle = '#881337';
+          avCtx.beginPath();
+          avCtx.moveTo(-16, 55); avCtx.lineTo(-10, 18); avCtx.lineTo(10, 18); avCtx.lineTo(16, 55);
+          avCtx.closePath(); avCtx.fill();
+
+          // White high collar & tie
+          avCtx.fillStyle = '#f8fafc';
+          avCtx.beginPath();
+          avCtx.moveTo(-8, 14); avCtx.lineTo(0, 24); avCtx.lineTo(8, 14);
+          avCtx.closePath(); avCtx.fill();
+
+          // Pale refined face
+          avCtx.fillStyle = '#ffe4e6';
+          avCtx.beginPath();
+          avCtx.ellipse(0, -6, 24, 30, 0, 0, Math.PI * 2);
+          avCtx.fill();
+
+          // Slicked dark raven hair
+          avCtx.fillStyle = '#09090b';
+          avCtx.beginPath();
+          avCtx.moveTo(-26, -6);
+          avCtx.quadraticCurveTo(-15, -42, 6, -38);
+          avCtx.quadraticCurveTo(26, -32, 26, -4);
+          avCtx.quadraticCurveTo(18, -20, 0, -22);
+          avCtx.closePath(); avCtx.fill();
+
+          // Calculating, sharp eyes & burgundy accent
+          avCtx.fillStyle = '#475569';
+          avCtx.fillRect(-14, -8, 7, 3);
+          avCtx.fillRect(7, -8, 7, 3);
+          avCtx.strokeStyle = '#991b1b';
+          avCtx.lineWidth = 1.5;
+          avCtx.strokeRect(-15, -9, 9, 5);
+          avCtx.strokeRect(6, -9, 9, 5);
+
+          // Thin refined mouth
+          avCtx.strokeStyle = '#9f1239';
+          avCtx.lineWidth = 1.8;
+          avCtx.beginPath();
+          avCtx.moveTo(-5, 12); avCtx.lineTo(5, 12); avCtx.stroke();
+
+        } else if (upper.includes('MAYA')) {
+          // MAYA: Soft, expressive eyes, chestnut hair, silver locket
+          avCtx.shadowColor = '#f472b6';
+          avCtx.shadowBlur = 14;
+          avCtx.fillStyle = 'rgba(244, 114, 182, 0.15)';
+          avCtx.beginPath(); avCtx.arc(0, -4, 36, 0, Math.PI * 2); avCtx.fill();
+          avCtx.shadowBlur = 0;
+
+          // Olive survival jacket
+          avCtx.fillStyle = '#3f6212';
+          avCtx.beginPath();
+          avCtx.moveTo(-34, 55); avCtx.lineTo(-20, 20); avCtx.lineTo(20, 20); avCtx.lineTo(34, 55);
+          avCtx.closePath(); avCtx.fill();
+
+          // Silver locket chain
+          avCtx.strokeStyle = '#e2e8f0';
+          avCtx.lineWidth = 1.5;
+          avCtx.beginPath();
+          avCtx.arc(0, 22, 10, 0, Math.PI); avCtx.stroke();
+          avCtx.fillStyle = '#cbd5e1';
+          avCtx.beginPath(); avCtx.arc(0, 32, 4, 0, Math.PI * 2); avCtx.fill();
+
+          // Face
+          avCtx.fillStyle = '#fed7aa';
+          avCtx.beginPath();
+          avCtx.ellipse(0, -6, 23, 28, 0, 0, Math.PI * 2);
+          avCtx.fill();
+
+          // Flowing chestnut brown hair
+          avCtx.fillStyle = '#78350f';
+          avCtx.beginPath();
+          avCtx.moveTo(-27, 24);
+          avCtx.quadraticCurveTo(-30, -38, 0, -38);
+          avCtx.quadraticCurveTo(30, -38, 27, 24);
+          avCtx.quadraticCurveTo(20, -10, 18, -16);
+          avCtx.quadraticCurveTo(0, -22, -18, -16);
+          avCtx.closePath(); avCtx.fill();
+
+          // Warm, emotional brown eyes
+          avCtx.fillStyle = '#451a03';
+          avCtx.beginPath();
+          avCtx.arc(-10, -6, 4, 0, Math.PI * 2);
+          avCtx.arc(10, -6, 4, 0, Math.PI * 2);
+          avCtx.fill();
+          // Eye highlights
+          avCtx.fillStyle = '#ffffff';
+          avCtx.beginPath();
+          avCtx.arc(-9, -8, 1.5, 0, Math.PI * 2);
+          avCtx.arc(11, -8, 1.5, 0, Math.PI * 2);
+          avCtx.fill();
+
+          // Gentle or concerned mouth
+          avCtx.strokeStyle = '#e11d48';
+          avCtx.lineWidth = 1.8;
+          avCtx.beginPath();
+          if (mood === 'grief') {
+            avCtx.arc(0, 14, 5, Math.PI, 0); // Frown/worry
+          } else {
+            avCtx.arc(0, 10, 5, 0, Math.PI); // Soft smile
+          }
+          avCtx.stroke();
+
+        } else if (upper.includes('VANCE')) {
+          // DR. ARTHUR VANCE: Tired, brilliant, graying hair, silver glasses, white lab coat
+          avCtx.fillStyle = '#f8fafc'; // Lab coat
+          avCtx.beginPath();
+          avCtx.moveTo(-34, 55); avCtx.lineTo(-20, 20); avCtx.lineTo(20, 20); avCtx.lineTo(34, 55);
+          avCtx.closePath(); avCtx.fill();
+
+          // Weathered face
+          avCtx.fillStyle = '#fde68a';
+          avCtx.beginPath();
+          avCtx.ellipse(0, -6, 23, 29, 0, 0, Math.PI * 2);
+          avCtx.fill();
+
+          // Receding gray hair
+          avCtx.fillStyle = '#94a3b8';
+          avCtx.beginPath();
+          avCtx.arc(-24, -14, 10, 0, Math.PI * 2);
+          avCtx.arc(24, -14, 10, 0, Math.PI * 2);
+          avCtx.arc(0, -34, 16, Math.PI, Math.PI * 2);
+          avCtx.fill();
+
+          // Round wire spectacles
+          avCtx.strokeStyle = '#cbd5e1';
+          avCtx.lineWidth = 2;
+          avCtx.strokeRect(-16, -11, 12, 10);
+          avCtx.strokeRect(4, -11, 12, 10);
+          avCtx.beginPath(); avCtx.moveTo(-4, -6); avCtx.lineTo(4, -6); avCtx.stroke();
+
+          // Tired eyes
+          avCtx.fillStyle = '#334155';
+          avCtx.fillRect(-12, -7, 4, 3);
+          avCtx.fillRect(8, -7, 4, 3);
+
+        } else if (upper.includes('KAEL')) {
+          // KAEL: Hardened sniper, headband, tactical vest
+          avCtx.fillStyle = '#1e293b';
+          avCtx.fillRect(-26, 20, 52, 35);
+          avCtx.fillStyle = '#fcd34d';
+          avCtx.beginPath(); avCtx.ellipse(0, -6, 24, 28, 0, 0, Math.PI * 2); avCtx.fill();
+          // Olive Headband
+          avCtx.fillStyle = '#65a30d';
+          avCtx.fillRect(-25, -24, 50, 8);
+          // Sharp scout eyes
+          avCtx.fillStyle = '#0f172a';
+          avCtx.fillRect(-12, -8, 6, 3); avCtx.fillRect(6, -8, 6, 3);
+
+        } else if (upper.includes('NARRATOR')) {
+          // CINEMATIC LOGO / ARCHIVE EMBLEM
+          avCtx.shadowColor = '#38bdf8';
+          avCtx.shadowBlur = 14;
+          avCtx.strokeStyle = '#38bdf8';
+          avCtx.lineWidth = 3;
+          avCtx.strokeRect(-28, -28, 56, 56);
+          avCtx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+          avCtx.fillRect(-28, -28, 56, 56);
+          avCtx.shadowBlur = 0;
+
+          avCtx.fillStyle = '#e2e8f0';
+          avCtx.font = 'bold 22px monospace';
+          avCtx.textAlign = 'center';
+          avCtx.textBaseline = 'middle';
+          avCtx.fillText('REC', 0, 0);
+
+        } else {
+          // ZEST (Protagonist): Young, determined, with glowing azure bio-vein markings across left temple
+          const isHybrid = Game.currentChapter >= 3;
+
+          if (isHybrid) {
+            avCtx.shadowColor = '#38bdf8';
+            avCtx.shadowBlur = 16;
+            avCtx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+            avCtx.beginPath(); avCtx.arc(0, -4, 36, 0, Math.PI * 2); avCtx.fill();
+            avCtx.shadowBlur = 0;
+          }
+
+          // Tactical Survivor Vest
+          avCtx.fillStyle = isHybrid ? '#0369a1' : '#334155';
+          avCtx.beginPath();
+          avCtx.moveTo(-34, 55); avCtx.lineTo(-20, 20); avCtx.lineTo(20, 20); avCtx.lineTo(34, 55);
+          avCtx.closePath(); avCtx.fill();
+
+          // Normal human face
+          avCtx.fillStyle = isHybrid ? '#e0f2fe' : '#fed7aa';
+          avCtx.beginPath();
+          avCtx.ellipse(0, -6, 24, 29, 0, 0, Math.PI * 2);
+          avCtx.fill();
+
+          // Hair
+          avCtx.fillStyle = '#1e293b';
+          avCtx.beginPath();
+          avCtx.moveTo(-26, 0);
+          avCtx.quadraticCurveTo(-20, -36, 0, -36);
+          avCtx.quadraticCurveTo(20, -36, 26, 0);
+          avCtx.quadraticCurveTo(14, -18, 0, -20);
+          avCtx.quadraticCurveTo(-14, -18, -26, 0);
+          avCtx.closePath(); avCtx.fill();
+
+          // Hybrid Azure Bio-Vein on temple
+          if (isHybrid) {
+            avCtx.strokeStyle = '#00f0ff';
+            avCtx.shadowColor = '#00f0ff';
+            avCtx.shadowBlur = 8;
+            avCtx.lineWidth = 2;
+            avCtx.beginPath();
+            avCtx.moveTo(-18, -18);
+            avCtx.lineTo(-14, -8);
+            avCtx.lineTo(-20, 2);
+            avCtx.stroke();
+            avCtx.shadowBlur = 0;
+          }
+
+          // Eyes: Determined
+          avCtx.fillStyle = isHybrid ? '#0284c7' : '#0f172a';
+          avCtx.beginPath();
+          avCtx.arc(-9, -6, 3.5, 0, Math.PI * 2);
+          avCtx.arc(9, -6, 3.5, 0, Math.PI * 2);
+          avCtx.fill();
+          if (isHybrid) {
+            avCtx.fillStyle = '#ffffff';
+            avCtx.beginPath();
+            avCtx.arc(-8, -7, 1.5, 0, Math.PI * 2);
+            avCtx.arc(10, -7, 1.5, 0, Math.PI * 2);
+            avCtx.fill();
+          }
+
+          // Mouth: Resolute
+          avCtx.strokeStyle = '#94a3b8';
+          avCtx.lineWidth = 2;
+          avCtx.beginPath();
+          avCtx.moveTo(-6, 12); avCtx.lineTo(6, 12); avCtx.stroke();
         }
+
         avCtx.restore();
       },
 
