@@ -782,9 +782,9 @@
       },
       {
         tag: "Protagonist",
-        name: "Zest (The Hybrid)",
+        name: "Zest (The Sovereign Hybrid — SF2 Composite Sword)",
         class: "grade-0",
-        desc: "Zest — a young survivor who lost everything during the outbreak. Battered to near death by the Blue Zombie, then rescued and transformed by Dr. Vance into a Human-Zombie Hybrid with superhuman speed, bio-energy blades, kinetic overdrive, and devastating supernatural combat abilities."
+        desc: "Zest — a young survivor who lost everything during the outbreak. Battered to near death by the Blue Zombie, then rescued and transformed by Dr. Vance into a Human-Zombie Hybrid with superhuman speed, bio-energy blades, kinetic overdrive, the legendary Segmented Composite Sword from Shadow Fight 2, and high-caliber heavy Vulcan Machine Guns — surpassing Agent X in pure combat velocity and lethal range."
       },
       {
         tag: "Founding Father",
@@ -1433,7 +1433,7 @@
       pistol:     { name: 'PISTOL',       dmg: 48,  range: 370, cooldown: 20, pellets: 1, spread: 0.035, ammo: 18, color: '#fbbf24' },
       shotgun:    { name: 'SHOTGUN',      dmg: 23,  range: 220, cooldown: 43, pellets: 5, spread: 0.25,  ammo: 10, color: '#f97316' },
       rifle:      { name: 'RIFLE',        dmg: 74,  range: 500, cooldown: 11, pellets: 1, spread: 0.02,  ammo: 28, color: '#34d399' },
-      machinegun: { name: 'MACHINE GUN',  dmg: 25,  range: 410, cooldown:  5, pellets: 1, spread: 0.11,  ammo: 45, color: '#f87171' }
+      machinegun: { name: 'VULCAN MACHINE GUN', dmg: 48, range: 480, cooldown: 3, pellets: 1, spread: 0.08, ammo: 150, color: '#f87171' }
     };
     const GUN_ORDER = ['pistol', 'shotgun', 'rifle', 'machinegun'];
 
@@ -1550,7 +1550,7 @@
       radius: 18,
       speed: 4.8,
       hp: 100,
-      maxHp: 100,
+      maxHp: 250, hp: 250,
       isHybrid: false,
       angle: 0,
 
@@ -1594,14 +1594,20 @@
       resetForChapter(ch) {
         this.x = canvas.width / 2;
         this.y = canvas.height / 2;
-        this.hp = 100;
+        this.maxHp = this.isHybrid ? 350 : 250;
+        this.hp = this.maxHp;
         this.isHybrid = ch >= 2;
-        this.speed = this.isHybrid ? 5.8 : 4.5;
+        this.speed = this.isHybrid ? 6.8 : 5.2;
         this.isDashing = false; this.dashFrames = 0; this.dashCooldown = 0;
         this.spinCooldown = 0; this.voidPulseCooldown = 0; this.azureOverdriveActive = false; this.azureOverdriveTimer = 0; this.azureOverdriveCooldown = 0; this.chainLightningCooldown = 0;
         this.comboStep = 0; this.comboTimer = 0; this.attackCooldown = 0;
         this.furyTimer = 0; this.mightTimer = 0; this.guardTimer = 0; this.hasteTimer = 0;
-        this.currentGun = null; this.arsenal = []; this.gunIndex = 0; this.gunAmmo = 0; this.gunCooldown = 0;
+        // ZEST STARTS WITH HEAVY MACHINE GUN + RIFLE
+        this.arsenal = ['machinegun', 'rifle', 'shotgun', 'pistol'];
+        this.currentGun = 'machinegun';
+        this.gunIndex = 0;
+        this.gunAmmo = 150;
+        this.gunCooldown = 0;
         this.starterGunDropped = false;
         Pickups.list = [];
         this.updateHUD();
@@ -1698,9 +1704,10 @@
         Sound.slash();
         Game.shake = 4;
 
-        const range = this.isHybrid ? 78 : 55;
-        const arc = Math.PI * 0.7;
-        let dmg = (this.isHybrid ? 42 : 25);
+        // SF2 COMPOSITE SWORD: Segmented whip-blade with massive range and serrated slashes
+        const range = this.isHybrid ? 135 : 85;
+        const arc = Math.PI * 0.85;
+        let dmg = (this.isHybrid ? 88 : 45); // Much more powerful than Agent X!
         if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
         if (this.azureOverdriveActive) dmg = Math.floor(dmg * 2.0);
 
@@ -1714,7 +1721,7 @@
           }
         }
         if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range + Boss.radius) Boss.takeDamage(dmg);
-        Particles.spawnSlashArc(this.x, this.y, this.angle, range, this.isHybrid, this.comboStep);
+        Particles.spawnCompositeSwordSlash(this.x, this.y, this.angle, range, this.isHybrid, this.comboStep);
       },
 
       fireGun() {
@@ -1975,17 +1982,50 @@
         ctx.strokeStyle = this.isHybrid ? '#38bdf8' : '#64748b';
         ctx.stroke();
 
-        if (this.isHybrid) {
-          ctx.strokeStyle = '#38bdf8';
-          ctx.shadowColor = '#38bdf8';
-          ctx.shadowBlur = 12;
-          ctx.lineWidth = 4;
-          ctx.beginPath(); ctx.moveTo(12, 10); ctx.lineTo(36, 14); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(12, -10); ctx.lineTo(32, -12); ctx.stroke();
-        } else {
-          ctx.strokeStyle = '#94a3b8';
-          ctx.lineWidth = 4;
-          ctx.beginPath(); ctx.moveTo(10, 8); ctx.lineTo(28, 12); ctx.stroke();
+        // SF2 COMPOSITE SWORD RENDERING (Segmented weapon)
+        const isSwinging = this.attackCooldown > 0;
+        const swordLen = isSwinging ? 48 : 34;
+        const numSegments = 5;
+
+        ctx.shadowColor = this.isHybrid ? '#38bdf8' : '#e2e8f0';
+        ctx.shadowBlur = this.isHybrid ? 14 : 4;
+        
+        // Sword Hilt & Guard
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(10, 6, 8, 4);
+        ctx.fillStyle = '#f59e0b'; // Gold guard accents
+        ctx.fillRect(16, 3, 3, 10);
+
+        // Segmented linked blade pieces (Shadow Fight 2 Composite Sword)
+        for (let s = 0; s < numSegments; s++) {
+          const segX = 19 + s * (swordLen / numSegments);
+          const segY = 8 + (isSwinging ? Math.sin(s * 0.9) * 4 : 0);
+          
+          ctx.fillStyle = this.isHybrid ? '#38bdf8' : '#cbd5e1';
+          ctx.beginPath();
+          ctx.moveTo(segX, segY - 3);
+          ctx.lineTo(segX + 7, segY);
+          ctx.lineTo(segX, segY + 3);
+          ctx.closePath();
+          ctx.fill();
+
+          // Glowing connecting wire/chain
+          ctx.strokeStyle = this.isHybrid ? '#0ea5e9' : '#64748b';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(segX - 2, segY);
+          ctx.lineTo(segX, segY);
+          ctx.stroke();
+        }
+
+        // Off-hand: Equipped Vulcan Machine Gun
+        if (this.currentGun === 'machinegun') {
+          ctx.fillStyle = '#334155';
+          ctx.fillRect(8, -12, 18, 5); // Gun body
+          ctx.fillStyle = '#0284c7';
+          ctx.fillRect(20, -13, 8, 2); // Laser sight / barrel
+          ctx.fillStyle = '#64748b';
+          ctx.fillRect(14, -7, 5, 4);  // Drum mag
         }
 
         ctx.fillStyle = this.isHybrid ? '#ffffff' : '#000000';
@@ -2413,6 +2453,22 @@
           });
         }
       },
+      spawnCompositeSwordSlash(x, y, angle, range, isHybrid, comboStep) {
+        this.list.push({
+          type: 'COMPOSITE_SLASH', x, y, angle, range, isHybrid,
+          comboStep, life: 12, maxLife: 12
+        });
+        // Segment sparks and ribbon trail
+        for (let s = 1; s <= 5; s++) {
+          const segDist = (range / 5) * s;
+          const a = angle + (Math.random() - 0.5) * 0.4;
+          this.list.push({
+            x: x + Math.cos(a) * segDist,
+            y: y + Math.sin(a) * segDist,
+            life: 14, maxLife: 14, size: 4, color: isHybrid ? '#38bdf8' : '#fbbf24'
+          });
+        }
+      },
       spawnSlashArc(x, y, angle, range, isHybrid, comboStep) {
         this.list.push({
           type: 'SLASH_ARC', x, y, angle, range, isHybrid,
@@ -2472,7 +2528,24 @@
         for (let p of this.list) {
           const alpha = p.life / p.maxLife;
           ctx.save();
-          if (p.type === 'SLASH_ARC') {
+          if (p.type === 'COMPOSITE_SLASH') {
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.angle);
+            // Draw whip segments
+            ctx.strokeStyle = p.isHybrid ? `rgba(56, 189, 248, ${alpha})` : `rgba(251, 191, 36, ${alpha})`;
+            ctx.shadowColor = p.isHybrid ? '#38bdf8' : '#f59e0b';
+            ctx.shadowBlur = 16;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(0, 0, p.range, -0.55, 0.55);
+            ctx.stroke();
+            // Inner serrated sharp arc
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, p.range * 0.85, -0.4, 0.4);
+            ctx.stroke();
+          } else if (p.type === 'SLASH_ARC') {
             ctx.translate(p.x, p.y);
             ctx.rotate(p.angle);
             ctx.strokeStyle = p.isHybrid ? `rgba(56, 189, 248, ${alpha})` : `rgba(241, 245, 249, ${alpha})`;
