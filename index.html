@@ -3,230 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Blue Zombie: Chronicles of the Hybrid</title>
+  <title>Blue Zombie: Chronicles of the Hybrid — Complete Master RPG Campaign</title>
   <style>
-    :root {
-      --bg: #06090e;
-      --panel: rgba(10, 16, 26, 0.94);
-      --border: #1a2a3e;
-      --accent: #38bdf8;
-      --accent-deep: #0284c7;
-      --accent-glow: rgba(56, 189, 248, 0.35);
-      --red: #f43f5e;
-      --gold: #fbbf24;
-      --text: #f8fafc;
-      --text-dim: #94a3b8;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    html, body {
-      width: 100%; height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    body, html {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
+      background: #05080d;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #e2e8f0;
     }
     #game-container {
       position: relative;
       width: 100vw;
       height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      background: #000;
+      justify-content: center;
     }
     canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
       display: block;
-      background: #090e15;
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
-      cursor: crosshair;
     }
 
-    /* Cinematic Bars */
-    .cinema-bar {
-      position: absolute;
-      left: 0; right: 0;
-      background: #000;
-      z-index: 50;
-      transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-      pointer-events: none;
-    }
-    #bar-top { top: 0; height: 0; }
-    #bar-bottom { bottom: 0; height: 0; }
-    .in-cutscene #bar-top, .in-cutscene #bar-bottom {
-      height: 9vh;
-    }
-
-    /* Cutscene Dialogue UI */
-    #cutscene-ui {
-      position: absolute;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(940px, 94vw);
-      background: rgba(8, 14, 24, 0.95);
-      border: 1px solid var(--border);
-      border-left: 5px solid var(--accent);
-      border-radius: 12px;
-      padding: 22px 28px;
-      display: none;
-      flex-direction: row;
-      gap: 24px;
-      align-items: flex-start;
-      z-index: 60;
-      box-shadow: 0 16px 50px rgba(0,0,0,0.85), 0 0 30px var(--accent-glow);
-      backdrop-filter: blur(14px);
-      animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translate(-50%, 24px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
-    }
-    .speaker-avatar {
-      width: 76px;
-      height: 76px;
-      border-radius: 10px;
-      background: #0b121e;
-      border: 2px solid var(--border);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-shrink: 0;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-      margin-top: 4px;
-    }
-    .dialogue-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .dialogue-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding-bottom: 8px;
-    }
-    .speaker-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .speaker-name {
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .speaker-role-badge {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      padding: 3px 9px;
-      border-radius: 4px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--accent);
-    }
-    .dialogue-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .dialogue-btn-skip {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .dialogue-btn-skip:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-    }
-    .dialogue-prompt {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-dim);
-      letter-spacing: 1.2px;
-      animation: pulse 1.5s infinite;
-      cursor: pointer;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-    .dialogue-text {
-      font-size: 16.5px;
-      line-height: 1.75;
-      letter-spacing: 0.35px;
-      color: #f1f5f9;
-      min-height: 52px;
-      font-weight: 400;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    }
-    .dialogue-text em {
-      color: #94a3b8;
-      font-style: italic;
-    }
-    .dialogue-footer {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-top: 4px;
-    }
-    .next-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #111e30;
-      border: 1px solid var(--accent-deep);
-      color: var(--accent);
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .next-pill:hover {
-      background: var(--accent-deep);
-      color: #fff;
-      transform: translateX(2px);
-    }
-
-    /* Top HUD */
+    /* TOP HUD */
     #hud {
       position: absolute;
-      top: 16px;
-      left: 20px;
-      right: 20px;
+      top: 0;
+      left: 0;
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      z-index: 30;
+      padding: 14px 20px;
+      z-index: 10;
       pointer-events: none;
     }
     .hud-box {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 18px;
       pointer-events: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      background: rgba(9, 14, 21, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 10px;
+      padding: 10px 14px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.6);
     }
     .hud-bars {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      width: 290px;
+      min-width: 260px;
     }
     .bar-wrap {
       display: flex;
@@ -235,77 +74,73 @@
     }
     .bar-label {
       font-size: 11px;
-      font-weight: 800;
-      width: 38px;
-      color: var(--text-dim);
+      font-weight: 700;
+      letter-spacing: 1px;
+      width: 44px;
+      color: #94a3b8;
     }
     .bar-bg {
       flex: 1;
-      height: 10px;
-      background: #111a26;
-      border-radius: 4px;
+      height: 9px;
+      background: #1e293b;
+      border-radius: 5px;
       overflow: hidden;
-      border: 1px solid #1f2d3d;
+      border: 1px solid rgba(255,255,255,0.08);
     }
     .bar-fill {
       height: 100%;
-      width: 100%;
+      border-radius: 5px;
       transition: width 0.12s ease-out;
     }
-    .bar-hp { background: linear-gradient(90deg, #e11d48, #22c55e); }
-    .bar-dash { background: linear-gradient(90deg, #0284c7, #38bdf8); }
-    .bar-spin { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .bar-hp { background: linear-gradient(90deg, #ef4444, #f87171); box-shadow: 0 0 10px rgba(239,68,68,0.5); }
+    .bar-dash { background: linear-gradient(90deg, #0ea5e9, #38bdf8); box-shadow: 0 0 8px rgba(14,165,233,0.5); }
+    .bar-spin { background: linear-gradient(90deg, #8b5cf6, #a855f7); box-shadow: 0 0 8px rgba(139,92,246,0.5); }
 
     .hud-gun-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: #38bdf8;
-      cursor: pointer;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
     }
     .hud-buffs {
       display: flex;
-      gap: 6px;
+      gap: 5px;
+      margin-top: 6px;
       flex-wrap: wrap;
-      margin-top: 4px;
-      font-size: 10px;
-      font-weight: 800;
     }
     .buff-tag {
-      padding: 2px 6px;
-      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      border: 1px solid;
     }
-    .buff-fury { background: rgba(240, 185, 79, 0.25); color: #f0b94f; border: 1px solid #f0b94f; }
-    .buff-might { background: rgba(183, 116, 255, 0.25); color: #b774ff; border: 1px solid #b774ff; }
-    .buff-guard { background: rgba(89, 205, 242, 0.25); color: #59cdf2; border: 1px solid #59cdf2; }
-    .buff-haste { background: rgba(110, 230, 142, 0.25); color: #6ee68e; border: 1px solid #6ee68e; }
+    .buff-fury { background: rgba(245, 158, 11, 0.25); border-color: #f59e0b; color: #fbbf24; }
+    .buff-might { background: rgba(239, 68, 68, 0.25); border-color: #ef4444; color: #f87171; }
+    .buff-guard { background: rgba(59, 130, 246, 0.25); border-color: #3b82f6; color: #60a5fa; }
+    .buff-haste { background: rgba(168, 85, 247, 0.25); border-color: #a855f7; color: #c084fc; }
 
     .hud-center {
       text-align: center;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 24px;
       pointer-events: auto;
     }
     .hud-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
       letter-spacing: 2px;
-      color: var(--accent);
-      text-transform: uppercase;
+      color: #38bdf8;
+      text-shadow: 0 0 12px rgba(56,189,248,0.6);
     }
     .hud-sub {
-      font-size: 11px;
-      color: var(--text-dim);
+      font-size: 12px;
+      color: #94a3b8;
       margin-top: 2px;
+      font-weight: 500;
     }
 
     .hud-buttons {
@@ -314,37 +149,39 @@
       pointer-events: auto;
     }
     .icon-btn {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-size: 12px;
+      background: rgba(9, 14, 21, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #e2e8f0;
+      font-size: 11px;
       font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
       cursor: pointer;
+      letter-spacing: 1px;
       transition: all 0.2s;
     }
     .icon-btn:hover {
-      background: var(--accent-deep);
-      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      box-shadow: 0 0 14px rgba(56,189,248,0.4);
     }
 
-    /* Boss HUD */
+    /* BOSS HEALTH BAR */
     #boss-hud {
       position: absolute;
-      top: 80px;
+      bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
-      width: min(540px, 86vw);
-      background: var(--panel);
-      border: 1px solid #e11d48;
-      border-radius: 6px;
-      padding: 10px 18px;
+      width: min(650px, 90vw);
+      background: rgba(9, 14, 21, 0.92);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: 10px;
+      padding: 10px 16px;
+      z-index: 10;
       display: none;
       flex-direction: column;
       gap: 6px;
-      z-index: 30;
-      box-shadow: 0 0 20px rgba(225, 29, 72, 0.35);
+      box-shadow: 0 0 30px rgba(239,68,68,0.3);
     }
     .boss-name-row {
       display: flex;
@@ -352,226 +189,313 @@
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 1.5px;
-      color: #fda4af;
-      text-transform: uppercase;
+      color: #f87171;
     }
 
-    /* Modal Screens */
+    /* CINEMATIC CUTSCENE MODAL */
+    #cutscene-ui {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(940px, 94vw);
+      background: rgba(8, 12, 18, 0.96);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-left: 6px solid #38bdf8;
+      border-radius: 12px;
+      padding: 22px 28px;
+      z-index: 50;
+      display: none;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.85);
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+    }
+    .dialogue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 8px;
+    }
+    .speaker-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .speaker-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 1.5px;
+    }
+    .speaker-role-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .dialogue-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dialogue-btn-skip {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .dialogue-prompt {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 1px;
+    }
+    .dialogue-body {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    #avatarCanvas {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      background: #0f172a;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      flex-shrink: 0;
+    }
+    .dialogue-text {
+      flex: 1;
+      font-size: 16.5px;
+      line-height: 1.75;
+      color: #e2e8f0;
+      min-height: 75px;
+      letter-spacing: 0.3px;
+    }
+    .dialogue-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+    .next-pill {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 1.5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* MODAL OVERLAYS (MENU & CODEX) */
     .modal-overlay {
       position: absolute;
-      inset: 0;
-      background: rgba(4, 7, 12, 0.88);
-      display: none;
-      justify-content: center;
-      align-items: center;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(5, 8, 13, 0.88);
+      backdrop-filter: blur(10px);
       z-index: 100;
-      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
     .modal-panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      width: min(860px, 92vw);
+      background: rgba(11, 17, 26, 0.98);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 14px;
+      padding: 24px 30px;
+      width: min(850px, 92vw);
       max-height: 85vh;
-      overflow-y: auto;
-      padding: 32px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 30px var(--accent-glow);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
     }
     .modal-panel h2 {
-      font-size: 24px;
+      font-size: 18px;
+      font-weight: 800;
       letter-spacing: 2px;
-      color: var(--accent);
-      text-transform: uppercase;
-      border-bottom: 2px solid var(--border);
+      color: #38bdf8;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       padding-bottom: 12px;
+      margin-bottom: 16px;
     }
     .menu-options {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 10px;
+      gap: 10px;
+      overflow-y: auto;
+      padding-right: 6px;
     }
     .menu-btn {
-      background: #101a27;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 14px 20px;
-      border-radius: 6px;
-      font-size: 15px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      color: #e2e8f0;
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      text-align: left;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: all 0.2s;
+      transition: all 0.18s;
     }
     .menu-btn:hover {
-      background: var(--accent-deep);
-      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
       transform: translateX(4px);
     }
-    .menu-btn span.badge {
-      font-size: 11px;
-      padding: 4px 8px;
+    .menu-btn .badge {
+      font-size: 10px;
+      padding: 3px 8px;
       border-radius: 4px;
-      background: rgba(255,255,255,0.1);
-      font-weight: 600;
+      background: rgba(56,189,248,0.18);
+      color: #38bdf8;
     }
 
-    /* Codex entries */
+    /* CODEX & LORE GRID */
     .codex-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px;
+      gap: 12px;
+      overflow-y: auto;
+      max-height: 520px;
+      padding-right: 6px;
+      margin-bottom: 16px;
     }
     .codex-card {
-      background: #0d1624;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 16px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
-    .codex-card.grade-0 { border-color: var(--accent); }
-    .codex-card.grade-1 { border-color: #a855f7; }
+    .codex-card.grade-0 { border-color: rgba(56, 189, 248, 0.5); background: rgba(2, 132, 199, 0.12); }
+    .codex-card.grade-1 { border-color: rgba(168, 85, 247, 0.5); background: rgba(147, 51, 234, 0.12); }
     .codex-tag {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--accent);
-      text-transform: uppercase;
-    }
-    .codex-name { font-size: 15px; font-weight: 700; color: #fff; }
-    .codex-desc { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
-
-    /* On-Screen Mobile Controls */
-    #mobile-controls {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 40;
-      display: none;
-    }
-    .touch-btn {
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: rgba(14, 23, 36, 0.85);
-      border: 2px solid rgba(56, 189, 248, 0.5);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-weight: 800;
-      font-size: 19px;
-      pointer-events: auto;
-      touch-action: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-      user-select: none;
-    }
-    .touch-btn:active {
-      transform: scale(0.92);
-      border-color: #38bdf8;
-    }
-    .touch-btn span.btn-lbl {
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 800;
       letter-spacing: 1px;
-      margin-top: 1px;
+      color: #38bdf8;
     }
-    #btn-slash { bottom: 35px; right: 35px; width: 78px; height: 78px; background: rgba(225, 29, 72, 0.45); border-color: #f43f5e; font-size: 24px; }
-    #btn-shoot { bottom: 35px; right: 125px; background: rgba(2, 132, 199, 0.45); border-color: #38bdf8; }
-    #btn-dash { bottom: 125px; right: 35px; }
-    #btn-spin { bottom: 125px; right: 125px; background: rgba(217, 119, 6, 0.45); border-color: #fbbf24; }
-    #btn-cycle { bottom: 205px; right: 80px; }
+    .codex-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+    .codex-desc {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #94a3b8;
+    }
+
+    /* NOTIFICATION BANNER */
+    #banner {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(8, 12, 18, 0.94);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: 10px;
+      padding: 14px 28px;
+      text-align: center;
+      z-index: 40;
+      display: none;
+      box-shadow: 0 0 30px rgba(56,189,248,0.3);
+    }
+    #banner h1 {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      color: #38bdf8;
+    }
+    #banner p {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-top: 3px;
+    }
+
+    /* MOBILE CONTROLS */
+    #mobile-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      height: 180px;
+      pointer-events: none;
+      z-index: 30;
+      display: none;
+    }
     #joystick-zone {
       position: absolute;
-      bottom: 35px;
-      left: 35px;
-      width: 140px;
-      height: 140px;
+      bottom: 25px;
+      left: 30px;
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
-      background: rgba(14, 23, 36, 0.45);
-      border: 2px dashed rgba(255,255,255,0.25);
+      background: rgba(15, 23, 42, 0.4);
+      border: 2px solid rgba(56, 189, 248, 0.3);
       pointer-events: auto;
-      touch-action: none;
     }
     #joystick-knob {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 54px; height: 54px;
-      border-radius: 50%;
-      background: var(--accent-deep);
-      border: 2px solid var(--accent);
-      pointer-events: none;
-    }
-
-    /* Notification Banner */
-    #banner {
-      position: absolute;
-      top: 30%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      text-align: center;
-      pointer-events: none;
-      z-index: 70;
-      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 12px #38bdf8;
     }
-    #banner h1 {
-      font-size: clamp(32px, 6vw, 56px);
-      font-weight: 900;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      text-shadow: 0 0 30px rgba(0,0,0,0.9);
-      color: #fff;
+    .touch-btn {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 2px solid rgba(56, 189, 248, 0.4);
+      color: #e2e8f0;
+      font-size: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
     }
-    #banner p {
-      font-size: 16px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      margin-top: 8px;
+    .touch-btn .btn-lbl {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #38bdf8;
     }
+    #btn-slash { bottom: 25px; right: 95px; width: 68px; height: 68px; border-color: #38bdf8; background: rgba(2, 132, 199, 0.35); }
+    #btn-shoot { bottom: 25px; right: 20px; width: 68px; height: 68px; border-color: #f87171; background: rgba(239, 68, 68, 0.25); }
+    #btn-dash { bottom: 105px; right: 95px; }
+    #btn-spin { bottom: 105px; right: 20px; }
+    #btn-cycle { bottom: 105px; right: 170px; }
   </style>
 </head>
 <body>
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
 
-    <!-- Cinematic Overlays -->
-    <div id="bar-top" class="cinema-bar"></div>
-    <div id="bar-bottom" class="cinema-bar"></div>
-
-    <!-- Cutscene Dialogue Box -->
-    <div id="cutscene-ui">
-      <div class="speaker-avatar" id="avatar-container">
-        <canvas id="avatarCanvas" width="76" height="76"></canvas>
-      </div>
-      <div class="dialogue-content">
-        <div class="dialogue-header">
-          <div class="speaker-meta">
-            <span class="speaker-name" id="speaker-name">Narrator</span>
-            <span class="speaker-role-badge" id="speaker-role">SITUATION REPORT</span>
-          </div>
-          <div class="dialogue-controls">
-            <button class="dialogue-btn-skip" id="btn-skip-cutscene" title="Skip current cutscene">SKIP ❯❯</button>
-            <div class="dialogue-prompt">[SPACE / CLICK]</div>
-          </div>
-        </div>
-        <div class="dialogue-text" id="dialogue-text">...</div>
-        <div class="dialogue-footer">
-          <div class="next-pill" id="btn-next-dialogue">CONTINUE ❯</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Gameplay Top HUD -->
+    <!-- TOP HUD -->
     <div id="hud">
       <div class="hud-box hud-bars">
         <div class="bar-wrap">
@@ -586,25 +510,25 @@
           <div class="bar-label">SPIN</div>
           <div class="bar-bg"><div id="spin-fill" class="bar-fill bar-spin" style="width: 100%"></div></div>
         </div>
-        <div class="hud-gun-row" id="hud-gun-info" title="Click or tap to cycle weapons (or press Q / Left Click)">
-          <span id="hud-gun-name">GUN: PISTOL (1/1)</span>
-          <span id="hud-ammo-count">AMMO: 18</span>
+        <div class="hud-gun-row" id="hud-gun-info">
+          <span id="hud-gun-name">GUN: VULCAN MACHINE GUN</span>
+          <span id="hud-ammo-count">AMMO: 150</span>
         </div>
         <div class="hud-buffs" id="hud-buffs-list"></div>
       </div>
 
       <div class="hud-center">
-        <div class="hud-title" id="stage-title">PROLOGUE: THE OUTBREAK</div>
-        <div class="hud-sub" id="wave-tracker">Threat Level: Grade 5 Horde</div>
+        <div class="hud-title" id="stage-title">CHAPTER 1: SHATTERED NORMALCY</div>
+        <div class="hud-sub" id="wave-tracker">District 7 — The Autumn Before the Silence</div>
       </div>
 
       <div class="hud-buttons">
         <button class="icon-btn" id="btn-codex">CODEX</button>
-        <button class="icon-btn" id="btn-pause">PAUSE</button>
+        <button class="icon-btn" id="btn-pause">CHAPTERS</button>
       </div>
     </div>
 
-    <!-- Boss Health Bar -->
+    <!-- BOSS HEALTH BAR -->
     <div id="boss-hud">
       <div class="boss-name-row">
         <span id="boss-title">GRADE 0: THE BLUE ZOMBIE</span>
@@ -615,7 +539,34 @@
       </div>
     </div>
 
-    <!-- Mobile Virtual Controls -->
+    <!-- CINEMATIC CUTSCENE BOX -->
+    <div id="cutscene-ui">
+      <div class="dialogue-header">
+        <div class="speaker-box">
+          <span class="speaker-name" id="speaker-name">ZEST</span>
+          <span class="speaker-role-badge" id="speaker-role">ORDINARY STUDENT</span>
+        </div>
+        <div class="dialogue-controls">
+          <button class="dialogue-btn-skip" id="btn-skip-cutscene">SKIP ❯❯</button>
+          <div class="dialogue-prompt">[SPACE / ENTER / CLICK]</div>
+        </div>
+      </div>
+      <div class="dialogue-body">
+        <canvas id="avatarCanvas" width="72" height="72"></canvas>
+        <div class="dialogue-text" id="dialogue-text">...</div>
+      </div>
+      <div class="dialogue-footer">
+        <div class="next-pill" id="btn-next-dialogue">CONTINUE ❯</div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION BANNER -->
+    <div id="banner">
+      <h1 id="banner-title">STAGE COMPLETE</h1>
+      <p id="banner-sub">PREPARE FOR CONFRONTATION</p>
+    </div>
+
+    <!-- MOBILE VIRTUAL CONTROLS -->
     <div id="mobile-controls">
       <div id="joystick-zone"><div id="joystick-knob"></div></div>
       <button type="button" class="touch-btn" id="btn-cycle" title="Cycle Gun">🔄<span class="btn-lbl">GUN</span></button>
@@ -625,189 +576,33 @@
       <button type="button" class="touch-btn" id="btn-shoot" title="Fire Gun">🔫<span class="btn-lbl">FIRE</span></button>
     </div>
 
-    <!-- Notification Banner -->
-    <div id="banner">
-      <h1 id="banner-title">STAGE COMPLETE</h1>
-      <p id="banner-sub">PREPARE FOR CONFRONTATION</p>
-    </div>
-
-    <!-- Pause / Main Menu Modal -->
+    <!-- CHAPTER SELECT / MAIN MENU MODAL -->
     <div id="menu-modal" class="modal-overlay">
       <div class="modal-panel">
-        <h2 id="modal-heading">MISSION LOG & SYSTEM</h2>
+        <h2>12-CHAPTER MASTER CAMPAIGN SELECT</h2>
         <div class="menu-options" id="modal-buttons" style="max-height: 480px; overflow-y: auto;">
           <button class="menu-btn" id="m-btn-resume">RESUME MISSION <span class="badge">ESC</span></button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(1);">
-            CH 1: Shattered Normalcy
-            <span class="badge">District 7</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(2);">
-            CH 2: The Edge of Death
-            <span class="badge">Central Plaza</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(3);">
-            CH 3: The Hybrid Rebirth
-            <span class="badge">Haven Medical Bunker</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(4);">
-            CH 4: The Pioneer's Legacy
-            <span class="badge">Haven Sanctuary</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(5);">
-            CH 5: Building Haven & The Lost Friends
-            <span class="badge">Haven Settlement</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(6);">
-            CH 6: The First Love & A Family Born
-            <span class="badge">Haven Sanctuary</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(7);">
-            CH 7: Aristocrat's Shadow
-            <span class="badge">Haven Perimeter</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(8);">
-            CH 8: The Gathering Storm
-            <span class="badge">Haven Command Room</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(9);">
-            CH 9: The Siege of Haven
-            <span class="badge">Haven Outer Barricades</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(10);">
-            CH 10: The Sovereign Descends
-            <span class="badge">The Scorched Courtyard</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(11);">
-            CH 11: The Sovereign's Memory
-            <span class="badge">The Psychic Flashback</span>
-          </button>
-          
-          <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(12);">
-            CH 12: The Ultimate Sacrifice & Epilogue
-            <span class="badge">The Scorched Ridge</span>
-          </button>
+          <!-- Chapters generated dynamically -->
           <button class="menu-btn" id="m-btn-sound">AUDIO: SYNTHESIZER SOUND ON</button>
         </div>
       </div>
     </div>
 
-    <!-- Lore Codex Modal -->
+    <!-- LORE CODEX MODAL -->
     <div id="codex-modal" class="modal-overlay">
       <div class="modal-panel">
-        <h2>ZOMBIE HIERARCHY & PERSONNEL DOSSIER</h2>
+        <h2>PERSONNEL & ZOMBIE HIERARCHY DOSSIER</h2>
         <div class="codex-grid" id="codex-content">
-          <!-- Filled by JS -->
+          <!-- Filled dynamically -->
         </div>
-        <button class="icon-btn" id="btn-close-codex" style="align-self: flex-start; padding: 12px 24px; margin-top: 10px;">CLOSE ARCHIVE</button>
+        <button class="icon-btn" id="btn-close-codex" style="align-self: flex-start; padding: 10px 20px; margin-top: 10px;">CLOSE ARCHIVE</button>
       </div>
     </div>
   </div>
 
   <script>
     /* =====================================================================
-       AUDIO SYNTHESIZER (No external mp3/wav files required, fully zero-lag)
-       ===================================================================== */
-    const Sound = {
-      ctx: null,
-      enabled: true,
-      init() {
-        if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) this.ctx = new AudioContext();
-        }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
-      },
-      playTone(freq, type, duration, gainVal = 0.2, pitchDrop = 0) {
-        if (!this.enabled || !this.ctx) return;
-        try {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-          if (pitchDrop !== 0) {
-            osc.frequency.exponentialRampToValueAtTime(Math.max(10, freq - pitchDrop), this.ctx.currentTime + duration);
-          }
-          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start();
-          osc.stop(this.ctx.currentTime + duration);
-        } catch(e) {}
-      },
-      noise(duration, gainVal = 0.15) {
-        if (!this.enabled || !this.ctx) return;
-        try {
-          const bufferSize = this.ctx.sampleRate * duration;
-          const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-          const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-          const noise = this.ctx.createBufferSource();
-          noise.buffer = buffer;
-          const filter = this.ctx.createBiquadFilter();
-          filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(800, this.ctx.currentTime);
-          const gain = this.ctx.createGain();
-          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-          noise.connect(filter);
-          filter.connect(gain);
-          gain.connect(this.ctx.destination);
-          noise.start();
-        } catch(e) {}
-      },
-      slash() {
-        this.playTone(320, 'triangle', 0.12, 0.25, 180);
-        this.noise(0.08, 0.15);
-      },
-      hit() {
-        this.playTone(180, 'sawtooth', 0.15, 0.35, 100);
-        this.noise(0.12, 0.2);
-      },
-      blaster() {
-        this.playTone(880, 'sine', 0.18, 0.2, 500);
-      },
-      dash() {
-        this.playTone(400, 'sine', 0.2, 0.15, 250);
-      },
-      overdrive() {
-        this.playTone(220, 'sawtooth', 0.4, 0.3, -400);
-        this.playTone(440, 'triangle', 0.5, 0.3, -200);
-      },
-      beep(pitch = 500) {
-        this.playTone(pitch, 'sine', 0.04, 0.06);
-      },
-      bossShockwave() {
-        this.playTone(90, 'sawtooth', 0.6, 0.5, 50);
-        this.noise(0.4, 0.35);
-      }
-    };
-
-    /* =====================================================================
-       CODEX / CANONICAL LORE DATA
-       ===================================================================== */
-        const CODEX_DATA = MASTER_CHARACTERS.map(c => ({
-      tag: c.role,
-      name: c.name,
-      class: c.id === 'blue_zombie' ? 'grade-0' : (c.id === 'agent_x' ? 'grade-1' : (c.id === 'zest' ? 'grade-0' : '')),
-      desc: `[${c.status}] ${c.description} (Weapon: ${c.weapon || 'None'})`
-    }));
-
-/* =====================================================================
-       EXPANDED 12-CHAPTER MASTER STORY CAMPAIGN (Chronicles of the Hybrid)
+       MASTER DATA INJECTION (12 Story Arcs & Complete Lore)
        ===================================================================== */
     const MASTER_CHAPTERS = [
   {
@@ -1548,412 +1343,162 @@
     "content": "Zest's grave overlooks the sunrise. Liam wears the silver locket. Ethan plays with the wooden sword. Haven's gates stand wide and safe. He gave his yesterday so that we could have tomorrow."
   }
 ];
-
-    const STORY_FLOW = {
-      getChapterScript(id) {
-        const found = MASTER_CHAPTERS.find(c => c.id === id);
-        return found ? found.lines : MASTER_CHAPTERS[0].lines;
-      }
-    };
+    const MASTER_HIERARCHY = [
+  {
+    "grade": "Grade 0",
+    "name": "The Blue Zombie",
+    "title": "Supreme Hive Sovereign",
+    "intelligence": "Super-intelligence / Autonomous Hive Overlord",
+    "threat_level": "Catastrophic (Existential)",
+    "appearance": "Human-shaped zombie silhouette with pale blue skin, wearing an ordinary worn gray T-shirt and standard black pants. Lacks excessive mutations, alien plating, or horns.",
+    "abilities": [
+      "Absolute neural command over all lower zombie grades",
+      "Immense supernatural kinetic force & telekinetic shockwaves",
+      "Instantaneous regeneration and spatial displacement",
+      "Strategic battlefield omniscience"
+    ],
+    "lore": "The original progenitor and pinnacle of the biological catastrophe. Created as a classified military project by the scientist before evolving beyond human containment. Highly articulate, cold, and supremely arrogant. In the ruins of the initial outbreak, it spared the wounded protagonist purely because the boy was too weak and insignificant to warrant the effort of execution.",
+    "unlocked_by_default": true
+  },
+  {
+    "grade": "Grade 1",
+    "name": "Agent X",
+    "title": "Second-in-Command / Field Inquisitor",
+    "intelligence": "Genius-level / Tactical Mastermind",
+    "threat_level": "Severe Extremity",
+    "appearance": "Pale, aristocratic, human-like male. Features dark styled hair, an elegant tailored black trench coat, crisp white dress shirt, burgundy vest, and subtle dark accessories. Retains flawless posture and speech.",
+    "abilities": [
+      "Sub-command authority over Grade 2-5 forces",
+      "Superhuman agility, precision strikes, and kinetic dampening",
+      "Psychological manipulation and strategic orchestration",
+      "Resistance to conventional firearms and trauma"
+    ],
+    "lore": "The Blue Zombie's most trusted executive. Operates as an envoy, strategist, and commander. Unwaveringly loyal to Grade 0, Agent X conducts incursions with chilling elegance and total lethality.",
+    "unlocked_by_default": false,
+    "unlock_chapter": 4
+  },
+  {
+    "grade": "Grade 2",
+    "name": "Goliaths & Wyrms",
+    "title": "Evolved Colossi & Aerial Horrors",
+    "intelligence": "Advanced Instinct / Coordinated Heavy Siege",
+    "threat_level": "High (Fortification Breaker)",
+    "appearance": "Massive mutated behemoths standing multiple stories tall, alongside serpentine dragon-like aerial organisms with leathery wings.",
+    "abilities": [
+      "Structural demolition and immense physical destruction",
+      "Aerial reconnaissance and ground bombardment",
+      "Thick chitinous plating capable of withstanding heavy artillery"
+    ],
+    "lore": "Apex bio-mass mutations that serve as siege engines for the infected army. When a settlement or military bastion resists conventional assaults, Grade 2 entities are deployed to rupture defensive perimeters.",
+    "unlocked_by_default": false,
+    "unlock_chapter": 4
+  },
+  {
+    "grade": "Grade 3",
+    "name": "Apex Predators",
+    "title": "Weapon-Wielding Tactical Stalkers",
+    "intelligence": "Human-level tactical reasoning",
+    "threat_level": "Moderate-High (Lethal in squads)",
+    "appearance": "Fierce, muscular humanoid infected retaining full cognitive agility, often seen wielding scavenged firearms, blades, and tactical gear.",
+    "abilities": [
+      "Proficient use of human weaponry and ballistic equipment",
+      "Flanking, ambush coordination, and cover utilization",
+      "Voice mimicry and communications interception"
+    ],
+    "lore": "The sudden realization that infected could think, formulate battle plans, and wield firearms shattered humanity's hope for an easy containment. Grade 3 hunters command lower grades in urban combat.",
+    "unlocked_by_default": false,
+    "unlock_chapter": 3
+  },
+  {
+    "grade": "Grade 4",
+    "name": "Coordinated Stalkers",
+    "title": "Pack Hunters",
+    "intelligence": "Basic intelligence / Rudimentary pack coordination",
+    "threat_level": "Moderate (Dangerous in numbers)",
+    "appearance": "Lean, fast-moving infected with sharpened reflexes and reactive posture.",
+    "abilities": [
+      "Pincer maneuvers and baiting tactics",
+      "Rapid sprint speed and climbing agility",
+      "Vocal signal calls to draw nearby swarms"
+    ],
+    "lore": "Unlike mindless wanderers, Grade 4s recognize obstacles, avoid crude traps, and coordinate basic swarm encircling against survivor patrols.",
+    "unlocked_by_default": false,
+    "unlock_chapter": 2
+  },
+  {
+    "grade": "Grade 5",
+    "name": "Normal Infected",
+    "title": "Instinct-Driven Swarm",
+    "intelligence": "Low / Instinct-driven",
+    "threat_level": "Low individually / Deadly in hordes",
+    "appearance": "Decaying former citizens showing rapid cellular alteration, erratic movement, and vacant expressions.",
+    "abilities": [
+      "Tenacious pursuit driven by sensory attraction",
+      "Insensitivity to pain and exhaustion",
+      "Swarm density and crushing mass"
+    ],
+    "lore": "The most common infected encountered during the initial hours of the collapse. Driven strictly by hunger and acoustic triggers, they serve as disposable shock troops for the higher grades.",
+    "unlocked_by_default": true
+  }
+];
 
     /* =====================================================================
-       GAME ENGINE & STATE
+       ZERO-LAG SYNTHESIZER AUDIO SYSTEM
        ===================================================================== */
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const avatarCanvas = document.getElementById('avatarCanvas');
-    const avCtx = avatarCanvas.getContext('2d');
-
-    // Resize handler
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const Game = {
-      state: 'STORY', // 'STORY', 'PLAYING', 'GAMEOVER', 'VICTORY'
-      currentChapter: 1, // 1 to 4
-      wave: 1,
-      maxWave: 3,
-      enemiesKilled: 0,
-      quotaKilled: 12,
-      isPaused: false,
-
-      // Screen Shake & VFX
-      shake: 0,
-      flashAlpha: 0,
-      flashColor: '#ffffff',
-
-      // Story Cutscene Player State
-      script: [],
-      scriptIndex: 0,
-      charIndex: 0,
-      dialogueTextTarget: "",
-      onCutsceneFinish: null,
-      dialogueTimer: null,
-
+    const Sound = {
+      ctx: null,
+      enabled: true,
       init() {
-        Input.init();
-        UI.init();
-        Sound.init();
-        this.loadChapter(1);
-        requestAnimationFrame(loop);
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
       },
-
-      loadChapter(ch) {
-        this.currentChapter = ch;
-        Enemies.list = [];
-        Projectiles.list = [];
-        Particles.list = [];
-        Boss.active = false;
-        Player.resetForChapter(ch);
-
-        const chData = MASTER_CHAPTERS.find(c => c.id === ch) || MASTER_CHAPTERS[0];
-        document.getElementById('stage-title').innerText = chData.title.toUpperCase();
-        document.getElementById('wave-tracker').innerText = chData.subtitle;
-
-        // Custom mission flow for each of the 12 Arcs
-        this.playCutscene(chData.lines, () => {
-          this.state = 'PLAYING';
-          this.enemiesKilled = 0;
-
-          if (ch === 1) {
-            // Chapter 1: The Collapse
-            this.quotaKilled = 14;
-            this.spawnHorde(14, 5);
-          } else if (ch === 2) {
-            // Chapter 2: The Edge of Death (First Blue Zombie Encounter)
-            this.quotaKilled = 16;
-            this.spawnHorde(16, 5);
-          } else if (ch === 3) {
-            // Chapter 3: Hybrid Rebirth (Dr. Vance Rescue)
-            this.quotaKilled = 18;
-            this.spawnHorde(18, 4);
-          } else if (ch === 4) {
-            // Chapter 4: Pioneer's Legacy (Dr. Vance's passing)
-            this.quotaKilled = 20;
-            this.spawnHorde(20, 4);
-          } else if (ch === 5) {
-            // Chapter 5: Building Haven & Reunited with Kael, Ren, Sora
-            this.quotaKilled = 22;
-            this.spawnHorde(22, 3);
-          } else if (ch === 6) {
-            // Chapter 6: First Love Maya & A Family Born
-            this.quotaKilled = 24;
-            this.spawnHorde(24, 3);
-          } else if (ch === 7) {
-            // Chapter 7: Aristocrat's Shadow (First Agent X Skirmish)
-            Boss.spawnAgentX();
-          } else if (ch === 8) {
-            // Chapter 8: The Gathering Storm (Midnight Sirens)
-            this.quotaKilled = 28;
-            this.spawnHorde(28, 3);
-          } else if (ch === 9) {
-            // Chapter 9: Siege of Haven (Duel Agent X to the death)
-            Boss.spawnAgentX();
-          } else if (ch === 10) {
-            // Chapter 10: The Sovereign Descends (Face to Face with Blue Zombie)
-            Boss.spawnBlueZombie();
-          } else if (ch === 11) {
-            // Chapter 11: The Sovereign's Memory (Psychic Flashback Clash)
-            Boss.spawnBlueZombie();
-          } else if (ch === 12) {
-            // Chapter 12: Ultimate Sacrifice & Epilogue
-            Boss.spawnBlueZombie();
+      playTone(freq, type, duration, gainVal = 0.2, pitchDrop = 0) {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          if (pitchDrop !== 0) {
+            osc.frequency.exponentialRampToValueAtTime(Math.max(10, freq + pitchDrop), this.ctx.currentTime + duration);
           }
-        });
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
       },
-
-      playCutscene(scriptArray, onFinish) {
-        this.state = 'STORY';
-        this.script = scriptArray;
-        this.scriptIndex = 0;
-        this.onCutsceneFinish = onFinish;
-        document.body.classList.add('in-cutscene');
-        const cutsceneBox = document.getElementById('cutscene-ui');
-        cutsceneBox.style.display = 'flex';
-        
-        // Setup interactive button events
-        document.getElementById('btn-skip-cutscene').onclick = (e) => {
-          e.stopPropagation();
-          this.endCutscene();
-        };
-        document.getElementById('btn-next-dialogue').onclick = (e) => {
-          e.stopPropagation();
-          this.advanceDialogue();
-        };
-        cutsceneBox.onclick = () => {
-          this.advanceDialogue();
-        };
-
-        this.showDialogueLine();
+      slash() { this.playTone(480, 'triangle', 0.12, 0.25, -280); },
+      blaster() { this.playTone(850, 'sawtooth', 0.14, 0.22, -600); },
+      hit() { this.playTone(130, 'square', 0.18, 0.35, -80); },
+      dash() { this.playTone(320, 'sine', 0.18, 0.2, 180); },
+      overdrive() {
+        this.playTone(220, 'sawtooth', 0.45, 0.35, -400);
+        this.playTone(440, 'triangle', 0.55, 0.3, -200);
       },
-
-      showDialogueLine() {
-        if (this.scriptIndex >= this.script.length) {
-          this.endCutscene();
-          return;
-        }
-        const item = this.script[this.scriptIndex];
-        const speakerEl = document.getElementById('speaker-name');
-        const roleEl = document.getElementById('speaker-role');
-        const cutsceneBox = document.getElementById('cutscene-ui');
-
-        speakerEl.innerText = item.speaker;
-        speakerEl.style.color = item.theme || '#38bdf8';
-        roleEl.innerText = item.role || 'COMMUNICATION';
-        roleEl.style.color = item.theme || '#38bdf8';
-        roleEl.style.borderColor = (item.theme || '#38bdf8') + '55';
-        roleEl.style.backgroundColor = (item.theme || '#38bdf8') + '1a';
-        cutsceneBox.style.borderLeftColor = item.theme || '#38bdf8';
-        cutsceneBox.style.boxShadow = `0 16px 50px rgba(0,0,0,0.85), 0 0 30px ${item.theme || '#38bdf8'}33`;
-
-        this.renderAvatar(item.speaker, item.theme);
-        
-        const textEl = document.getElementById('dialogue-text');
-        textEl.innerText = "";
-        this.dialogueTextTarget = item.text;
-        this.charIndex = 0;
-
-        if (this.dialogueTimer) clearInterval(this.dialogueTimer);
-        this.dialogueTimer = setInterval(() => {
-          if (this.charIndex < this.dialogueTextTarget.length) {
-            textEl.innerText += this.dialogueTextTarget[this.charIndex];
-            if (this.charIndex % 3 === 0) {
-              const pitch = item.speaker.includes('BLUE ZOMBIE') ? 220 : (item.speaker.includes('AGENT X') ? 360 : (item.speaker.includes('VANCE') ? 440 : 540));
-              Sound.beep(pitch);
-            }
-            this.charIndex++;
-          } else {
-            clearInterval(this.dialogueTimer);
-          }
-        }, 20);
-      },
-
-      advanceDialogue() {
-        if (this.charIndex < this.dialogueTextTarget.length) {
-          // Instant complete line
-          clearInterval(this.dialogueTimer);
-          document.getElementById('dialogue-text').innerText = this.dialogueTextTarget;
-          this.charIndex = this.dialogueTextTarget.length;
-        } else {
-          this.scriptIndex++;
-          this.showDialogueLine();
-        }
-      },
-
-      endCutscene() {
-        if (this.dialogueTimer) clearInterval(this.dialogueTimer);
-        document.body.classList.remove('in-cutscene');
-        document.getElementById('cutscene-ui').style.display = 'none';
-        if (this.onCutsceneFinish) {
-          const fn = this.onCutsceneFinish;
-          this.onCutsceneFinish = null;
-          fn();
-        }
-      },
-
-      renderAvatar(speaker, themeColor = '#38bdf8') {
-        avCtx.clearRect(0, 0, 76, 76);
-        avCtx.fillStyle = '#0a101b';
-        avCtx.fillRect(0, 0, 76, 76);
-
-        if (speaker.includes('BLUE ZOMBIE')) {
-          // CANONICAL BLUE ZOMBIE: Human-shaped, pale blue skin, ordinary gray T-shirt, black pants
-          avCtx.fillStyle = '#22d3ee'; // pale blue skin
-          avCtx.beginPath();
-          avCtx.arc(38, 28, 17, 0, Math.PI * 2);
-          avCtx.fill();
-          // Eyes
-          avCtx.fillStyle = '#ffffff';
-          avCtx.fillRect(32, 26, 4, 3);
-          avCtx.fillRect(40, 26, 4, 3);
-          // Ordinary Gray T-shirt
-          avCtx.fillStyle = '#64748b';
-          avCtx.fillRect(22, 48, 32, 28);
-          // Azure telekinetic aura border
-          avCtx.strokeStyle = '#38bdf8';
-          avCtx.lineWidth = 3;
-          avCtx.strokeRect(1, 1, 74, 74);
-        } else if (speaker.includes('AGENT X')) {
-          // CANONICAL AGENT X: Pale human male, dark slick hair, black coat, burgundy vest
-          avCtx.fillStyle = '#ffe4e6'; // pale human skin
-          avCtx.beginPath();
-          avCtx.arc(38, 28, 16, 0, Math.PI * 2);
-          avCtx.fill();
-          // Dark slick hair
-          avCtx.fillStyle = '#0f172a';
-          avCtx.beginPath();
-          avCtx.arc(38, 22, 17, Math.PI, 0);
-          avCtx.fill();
-          // Burgundy vest & black coat
-          avCtx.fillStyle = '#881337'; // burgundy
-          avCtx.fillRect(29, 48, 18, 28);
-          avCtx.fillStyle = '#090d16'; // black coat lapels
-          avCtx.fillRect(18, 48, 11, 28);
-          avCtx.fillRect(47, 48, 11, 28);
-          avCtx.strokeStyle = '#c084fc';
-          avCtx.lineWidth = 3;
-          avCtx.strokeRect(1, 1, 74, 74);
-        } else if (speaker.includes('PROTAGONIST')) {
-          // Young boy survivor -> Hybrid boy
-          const isHybrid = Game.currentChapter >= 2;
-          avCtx.fillStyle = '#fed7aa'; // boy skin
-          avCtx.beginPath();
-          avCtx.arc(38, 30, 17, 0, Math.PI * 2);
-          avCtx.fill();
-          // Messy brown hair
-          avCtx.fillStyle = '#78350f';
-          avCtx.beginPath();
-          avCtx.arc(38, 24, 18, Math.PI * 0.9, Math.PI * 2.1);
-          avCtx.fill();
-          // Jacket
-          avCtx.fillStyle = isHybrid ? '#0284c7' : '#334155';
-          avCtx.fillRect(22, 50, 32, 26);
-          if (isHybrid) {
-            // Glowing cyan eyes and bio veins
-            avCtx.fillStyle = '#38bdf8';
-            avCtx.fillRect(32, 29, 4, 3);
-            avCtx.fillRect(40, 29, 4, 3);
-            avCtx.strokeStyle = '#38bdf8';
-            avCtx.lineWidth = 3;
-            avCtx.strokeRect(1, 1, 74, 74);
-          } else {
-            avCtx.strokeStyle = '#60a5fa';
-            avCtx.lineWidth = 3;
-            avCtx.strokeRect(1, 1, 74, 74);
-          }
-        } else if (speaker.includes('VANCE')) {
-          // Dr. Arthur Vance: scientist, glasses, lab coat
-          avCtx.fillStyle = '#fde68a';
-          avCtx.beginPath();
-          avCtx.arc(38, 28, 17, 0, Math.PI * 2);
-          avCtx.fill();
-          // White hair
-          avCtx.fillStyle = '#cbd5e1';
-          avCtx.beginPath();
-          avCtx.arc(38, 22, 18, Math.PI, 0);
-          avCtx.fill();
-          // Glasses
-          avCtx.strokeStyle = '#0284c7';
-          avCtx.lineWidth = 2;
-          avCtx.strokeRect(30, 26, 6, 5);
-          avCtx.strokeRect(40, 26, 6, 5);
-          // Lab coat
-          avCtx.fillStyle = '#f8fafc';
-          avCtx.fillRect(20, 48, 36, 28);
-          avCtx.strokeStyle = '#fbbf24';
-          avCtx.lineWidth = 3;
-          avCtx.strokeRect(1, 1, 74, 74);
-        } else {
-          // Narrator / Terminal
-          avCtx.fillStyle = '#94a3b8';
-          avCtx.font = "32px monospace";
-          avCtx.textAlign = "center";
-          avCtx.textBaseline = "middle";
-          avCtx.fillText("◈", 38, 38);
-          avCtx.strokeStyle = '#334155';
-          avCtx.lineWidth = 3;
-          avCtx.strokeRect(1, 1, 74, 74);
-        }
-      },
-
-      spawnHorde(count, maxGrade = 5) {
-        for (let i = 0; i < count; i++) {
-          setTimeout(() => {
-            if (this.state !== 'PLAYING') return;
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 550 + Math.random() * 200;
-            const x = Player.x + Math.cos(angle) * dist;
-            const y = Player.y + Math.sin(angle) * dist;
-            let grade = 5;
-            if (maxGrade <= 4 && Math.random() > 0.45) grade = 4;
-            if (maxGrade <= 3 && Math.random() > 0.7) grade = 3;
-            Enemies.spawn(x, y, grade);
-          }, i * 350);
-        }
-      },
-
-      onEnemyDefeated(enemy) {
-        this.enemiesKilled++;
-
-        // Loot drops (zombie-night logic)
-        if (!Player.starterGunDropped) {
-          Pickups.drop(enemy.x, enemy.y, false, 'gun');
-          Player.starterGunDropped = true;
-        } else if (Player.currentGun && Player.gunAmmo <= 6) {
-          Pickups.drop(enemy.x, enemy.y, false, 'ammo');
-        } else if (Math.random() < 0.35) {
-          Pickups.drop(enemy.x, enemy.y, false);
-        }
-
-        document.getElementById('wave-tracker').innerText = `Defeated: ${this.enemiesKilled} / ${this.quotaKilled}`;
-        if (this.quotaKilled && this.enemiesKilled >= this.quotaKilled) {
-          this.quotaKilled = 0;
-          Enemies.list = [];
-          const nextCh = this.currentChapter + 1;
-          if (nextCh <= MASTER_CHAPTERS.length) {
-            this.showBanner("CHAPTER COMPLETED", `PREPARING CHAPTER ${nextCh}...`);
-            setTimeout(() => { this.loadChapter(nextCh); }, 2500);
-          } else {
-            this.showBanner("WAR FOR TOMORROW", "EPILOGUE COMPLETE — SANCTUARY ENDURES");
-          }
-        }
-      },
-
-      onBossDefeated(bossName) {
-        if (this.currentChapter === 7) {
-          // Chapter 7: Agent X retreats into burgundy shadows
-          this.showBanner("AGENT X RETREATS", "HAVEN GATES DEFENDED");
-          setTimeout(() => { this.loadChapter(8); }, 2500);
-        } else if (this.currentChapter === 9) {
-          // Chapter 9: Agent X permanently slain
-          this.showBanner("AGENT X SLAIN", "THE SOVEREIGN ENTERS THE BATTLEFIELD");
-          setTimeout(() => { this.loadChapter(10); }, 2500);
-        } else if (this.currentChapter === 10) {
-          // Chapter 10: Sovereign clash initiates psychic resonance
-          setTimeout(() => { this.loadChapter(11); }, 2000);
-        } else if (this.currentChapter === 11) {
-          // Chapter 11: Memory unlocked, entering final reckoning
-          setTimeout(() => { this.loadChapter(12); }, 2000);
-        } else if (this.currentChapter === 12) {
-          // Chapter 12: Ultimate Mutual Sacrifice Finale!
-          this.showBanner("ULTIMATE SACRIFICE", "REST IN PEACE, ZEST");
-          this.playCutscene(MASTER_CHAPTERS[11].lines, () => {
-            this.showBanner("THE UNBROKEN DAWN", "HUMANITY ENDURES IN HAVEN");
-          });
-        } else {
-          const nextCh = this.currentChapter + 1;
-          if (nextCh <= MASTER_CHAPTERS.length) {
-            this.loadChapter(nextCh);
-          }
-        }
-      },
-
-      showBanner(title, sub) {
-        const b = document.getElementById('banner');
-        document.getElementById('banner-title').innerText = title;
-        document.getElementById('banner-sub').innerText = sub;
-        b.style.display = 'block';
-        setTimeout(() => { b.style.display = 'none'; }, 4000);
+      bossShockwave() {
+        this.playTone(90, 'sawtooth', 0.65, 0.5, 40);
       }
     };
 
     /* =====================================================================
-       GUNS DEFINITION (exact zombie-night specs)
+       GUN DEFINITIONS
        ===================================================================== */
     const GUNS = {
-      pistol:     { name: 'PISTOL',       dmg: 48,  range: 370, cooldown: 20, pellets: 1, spread: 0.035, ammo: 18, color: '#fbbf24' },
-      shotgun:    { name: 'SHOTGUN',      dmg: 23,  range: 220, cooldown: 43, pellets: 5, spread: 0.25,  ammo: 10, color: '#f97316' },
-      rifle:      { name: 'RIFLE',        dmg: 74,  range: 500, cooldown: 11, pellets: 1, spread: 0.02,  ammo: 28, color: '#34d399' },
-      machinegun: { name: 'VULCAN MACHINE GUN', dmg: 48, range: 480, cooldown: 3, pellets: 1, spread: 0.08, ammo: 150, color: '#f87171' }
+      machinegun: { name: 'VULCAN MACHINE GUN', dmg: 48, range: 480, cooldown: 3, pellets: 1, spread: 0.08, ammo: 150, color: '#f87171' },
+      rifle:      { name: 'RIFLE',              dmg: 74, range: 500, cooldown: 11, pellets: 1, spread: 0.02, ammo: 28,  color: '#34d399' },
+      shotgun:    { name: 'SHOTGUN',            dmg: 23, range: 220, cooldown: 43, pellets: 5, spread: 0.25, ammo: 10,  color: '#f97316' },
+      pistol:     { name: 'PISTOL',             dmg: 48, range: 370, cooldown: 20, pellets: 1, spread: 0.035, ammo: 18, color: '#fbbf24' }
     };
-    const GUN_ORDER = ['pistol', 'shotgun', 'rifle', 'machinegun'];
+    const GUN_ORDER = ['machinegun', 'rifle', 'shotgun', 'pistol'];
 
     /* =====================================================================
-       PICKUPS / LOOT DROPS
+       PICKUPS & LOOT SYSTEM
        ===================================================================== */
     const Pickups = {
       list: [],
@@ -1963,51 +1508,47 @@
         let gunKey = null;
         if (type === 'gun') {
           const available = GUN_ORDER.filter(k => !Player.arsenal.includes(k));
-          if (available.length === 0) { type = 'ammo'; } else {
-            gunKey = available[Math.floor(Math.random() * available.length)];
-          }
+          if (available.length === 0) type = 'ammo';
+          else gunKey = available[Math.floor(Math.random() * available.length)];
         }
         this.list.push({ x, y, type, gunKey, life: 420, spin: 0 });
         if (isBoss) {
-          // bonus drop
           const bonusPool = ['fury', 'might', 'guard', 'haste'];
           this.list.push({ x: x + 28, y, type: bonusPool[Math.floor(Math.random() * bonusPool.length)], gunKey: null, life: 420, spin: 0 });
         }
       },
       collect(drop) {
-        const labels = { med:'MED KIT', fury:'FURY', might:'MIGHT', guard:'GUARD', haste:'HASTE', ammo:'AMMO', gun:'NEW GUN' };
         switch(drop.type) {
           case 'med':
-            Player.hp = Math.min(Player.maxHp, Player.hp + 28);
-            Game.showBanner('MED KIT', '+28 HP');
+            Player.hp = Math.min(Player.maxHp, Player.hp + 40);
+            Game.showBanner('MED KIT', '+40 HP RESTORED');
             break;
           case 'fury':
-            Player.furyTimer = 420; // 7s
-            Game.showBanner('FURY', 'FAST SLASHES');
+            Player.furyTimer = 420;
+            Game.showBanner('FURY', 'SERRATED SLASH VELOCITY');
             break;
           case 'might':
-            Player.mightTimer = 540; // 9s
-            Game.showBanner('MIGHT', '+65% DAMAGE');
+            Player.mightTimer = 540;
+            Game.showBanner('MIGHT', '+65% EXTRA DAMAGE');
             break;
           case 'guard':
             Player.guardTimer = 540;
-            Game.showBanner('GUARD', '58% LESS DAMAGE');
+            Game.showBanner('GUARD', '58% DAMAGE REDUCTION');
             break;
           case 'haste':
             Player.hasteTimer = 540;
-            Game.showBanner('HASTE', '+28% SPEED');
+            Game.showBanner('HASTE', '+28% RUN VELOCITY');
             break;
           case 'ammo':
             if (Player.currentGun) {
-              const add = 8 + Math.floor(Math.random() * 11);
-              Player.gunAmmo = Math.min(GUNS[Player.currentGun].ammo * 2, Player.gunAmmo + add);
+              const add = 25 + Math.floor(Math.random() * 20);
+              Player.gunAmmo += add;
             }
             break;
           case 'gun':
             if (drop.gunKey && !Player.arsenal.includes(drop.gunKey)) {
               Player.arsenal.push(drop.gunKey);
-              if (!Player.currentGun) { Player.currentGun = drop.gunKey; Player.gunAmmo = GUNS[drop.gunKey].ammo; Player.gunCooldown = 0; }
-              Game.showBanner('NEW GUN', GUNS[drop.gunKey].name + ' ACQUIRED');
+              Game.showBanner('NEW WEAPON', GUNS[drop.gunKey].name + ' UNLOCKED');
             }
             break;
         }
@@ -2019,7 +1560,6 @@
           const d = this.list[i];
           d.life--;
           d.spin += 0.04;
-          // Collect if player overlaps
           if (Math.hypot(Player.x - d.x, Player.y - d.y) < Player.radius + 18) {
             this.collect(d);
             this.list.splice(i, 1);
@@ -2057,73 +1597,72 @@
     };
 
     /* =====================================================================
-       PLAYER (Boy / Transformed Hybrid) — zombie-night compatible
+       PLAYER (Zest — Human-Zombie Hybrid)
        ===================================================================== */
     const Player = {
-      x: 0,
-      y: 0,
+      x: 0, y: 0,
       radius: 18,
-      speed: 4.8,
-      hp: 100,
-      maxHp: 250, hp: 250,
-      isHybrid: false,
+      speed: 6.8,
+      hp: 350,
+      maxHp: 350,
+      isHybrid: true,
       angle: 0,
 
-      // Sword combo
+      // SF2 Composite Sword & Combo
       comboStep: 0,
       comboTimer: 0,
       attackCooldown: 0,
 
-      // Dash
+      // Movement & Dash
       isDashing: false,
       dashFrames: 0,
       dashCooldown: 0,
       dashDirX: 0,
       dashDirY: 0,
 
-      // Spin-Breaker
+      // Standard Skills
       spinCooldown: 0,
-      // OP Skills
+
+      // OP Hybrid Skills
       voidPulseCooldown: 0,
       azureOverdriveActive: false,
       azureOverdriveTimer: 0,
       azureOverdriveCooldown: 0,
       chainLightningCooldown: 0,
 
-      // Buffs (frame counters)
+      // Buffs
       furyTimer: 0,
       mightTimer: 0,
       guardTimer: 0,
       hasteTimer: 0,
 
-      // Gun system
-      currentGun: null,
-      arsenal: [],
+      // Weapons Arsenal
+      currentGun: 'machinegun',
+      arsenal: ['machinegun', 'rifle', 'shotgun', 'pistol'],
       gunIndex: 0,
-      gunAmmo: 0,
+      gunAmmo: 150,
       gunCooldown: 0,
-
-      // Loot state
-      starterGunDropped: false,
 
       resetForChapter(ch) {
         this.x = canvas.width / 2;
         this.y = canvas.height / 2;
+        this.isHybrid = ch >= 3;
         this.maxHp = this.isHybrid ? 350 : 250;
         this.hp = this.maxHp;
-        this.isHybrid = ch >= 2;
         this.speed = this.isHybrid ? 6.8 : 5.2;
+
         this.isDashing = false; this.dashFrames = 0; this.dashCooldown = 0;
-        this.spinCooldown = 0; this.voidPulseCooldown = 0; this.azureOverdriveActive = false; this.azureOverdriveTimer = 0; this.azureOverdriveCooldown = 0; this.chainLightningCooldown = 0;
+        this.spinCooldown = 0; this.voidPulseCooldown = 0;
+        this.azureOverdriveActive = false; this.azureOverdriveTimer = 0; this.azureOverdriveCooldown = 0;
+        this.chainLightningCooldown = 0;
         this.comboStep = 0; this.comboTimer = 0; this.attackCooldown = 0;
         this.furyTimer = 0; this.mightTimer = 0; this.guardTimer = 0; this.hasteTimer = 0;
-        // ZEST STARTS WITH HEAVY MACHINE GUN + RIFLE
-        this.arsenal = ['machinegun', 'rifle', 'shotgun', 'pistol'];
+
         this.currentGun = 'machinegun';
+        this.arsenal = ['machinegun', 'rifle', 'shotgun', 'pistol'];
         this.gunIndex = 0;
         this.gunAmmo = 150;
         this.gunCooldown = 0;
-        this.starterGunDropped = false;
         Pickups.list = [];
         this.updateHUD();
       },
@@ -2131,7 +1670,7 @@
       update() {
         if (Game.state !== 'PLAYING') return;
 
-        // Buff timers
+        // Buff Timers
         if (this.furyTimer > 0) this.furyTimer--;
         if (this.mightTimer > 0) this.mightTimer--;
         if (this.guardTimer > 0) this.guardTimer--;
@@ -2146,19 +1685,23 @@
         if (this.chainLightningCooldown > 0) this.chainLightningCooldown--;
         if (this.azureOverdriveCooldown > 0) this.azureOverdriveCooldown--;
 
+        // Azure Overdrive Active State
         if (this.azureOverdriveActive) {
           this.azureOverdriveTimer--;
-          this.hp = Math.min(this.maxHp, this.hp + 0.35);
+          this.hp = Math.min(this.maxHp, this.hp + 0.35); // Regen
           if (this.azureOverdriveTimer <= 0) this.azureOverdriveActive = false;
         }
 
         // Combo reset
-        if (this.comboTimer > 0) { this.comboTimer--; if (this.comboTimer <= 0) this.comboStep = 0; }
+        if (this.comboTimer > 0) {
+          this.comboTimer--;
+          if (this.comboTimer <= 0) this.comboStep = 0;
+        }
 
         // Dashing
         if (this.isDashing) {
-          this.x += this.dashDirX * 13;
-          this.y += this.dashDirY * 13;
+          this.x += this.dashDirX * 14;
+          this.y += this.dashDirY * 14;
           this.dashFrames--;
           Particles.spawnDashGhost(this.x, this.y, this.angle, this.isHybrid);
           if (this.dashFrames <= 0) this.isDashing = false;
@@ -2166,7 +1709,7 @@
           return;
         }
 
-        // Auto-fire when Shift held or right mouse held
+        // Auto-fire with Shift or right-click
         if ((Input.shiftHeld || Input.keys['Shift']) && Game.state === 'PLAYING') {
           this.fireGun();
         }
@@ -2186,16 +1729,16 @@
           this.y += (dy / len) * spd;
         }
 
-        // Auto-aim: lock to nearest enemy within 300px, else mouse
+        // Auto-Aim to nearest threat (or mouse)
         let aimX = Input.mouseX, aimY = Input.mouseY;
-        let nearest = null, nearDist = 300;
+        let nearest = null, nearDist = 320;
         for (let e of Enemies.list) {
           const d = Math.hypot(e.x - this.x, e.y - this.y);
           if (d < nearDist) { nearDist = d; nearest = e; }
         }
         if (Boss.active) {
           const bd = Math.hypot(Boss.x - this.x, Boss.y - this.y);
-          if (bd < nearDist) { nearest = Boss; }
+          if (bd < nearDist) nearest = Boss;
         }
         if (nearest) { aimX = nearest.x; aimY = nearest.y; }
         this.angle = Math.atan2(aimY - this.y, aimX - this.x);
@@ -2210,6 +1753,7 @@
         this.y = Math.max(pad, Math.min(canvas.height - pad, this.y));
       },
 
+      // SHADOW FIGHT 2 COMPOSITE SWORD MELEE
       attack() {
         if (this.attackCooldown > 0) return;
         const cd = this.furyTimer > 0 ? 8 : 14;
@@ -2217,12 +1761,11 @@
         this.comboTimer = 35;
         this.attackCooldown = cd;
         Sound.slash();
-        Game.shake = 4;
+        Game.shake = 5;
 
-        // SF2 COMPOSITE SWORD: Segmented whip-blade with massive range and serrated slashes
         const range = this.isHybrid ? 135 : 85;
         const arc = Math.PI * 0.85;
-        let dmg = (this.isHybrid ? 88 : 45); // Much more powerful than Agent X!
+        let dmg = (this.isHybrid ? 88 : 45);
         if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
         if (this.azureOverdriveActive) dmg = Math.floor(dmg * 2.0);
 
@@ -2235,7 +1778,9 @@
             if (diff < arc / 2) e.takeDamage(dmg, Math.cos(this.angle) * 8, Math.sin(this.angle) * 8);
           }
         }
-        if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range + Boss.radius) Boss.takeDamage(dmg);
+        if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range + Boss.radius) {
+          Boss.takeDamage(dmg);
+        }
         Particles.spawnCompositeSwordSlash(this.x, this.y, this.angle, range, this.isHybrid, this.comboStep);
       },
 
@@ -2267,63 +1812,10 @@
         });
       },
 
-      spinBreaker() {
-        if (this.spinCooldown > 0) return;
-        this.spinCooldown = 264; // 4.4s
-        Sound.overdrive();
-        Game.shake = 14;
-        Game.flashAlpha = 0.5;
-        Game.flashColor = '#38bdf8';
-
-        const range = this.isHybrid ? 220 : 160;
-        let dmg = this.isHybrid ? 110 : 70;
-        if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
-
-        for (let e of Enemies.list) {
-          const d = Math.hypot(e.x - this.x, e.y - this.y);
-          if (d < range) {
-            const ang = Math.atan2(e.y - this.y, e.x - this.x);
-            e.takeDamage(dmg, Math.cos(ang) * 12, Math.sin(ang) * 12);
-          }
-        }
-        if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range) Boss.takeDamage(dmg);
-        Particles.spawnShockwave(this.x, this.y, this.isHybrid ? '#38bdf8' : '#94a3b8', range);
-      },
-
-      dash() {
-        if (this.isDashing || this.dashCooldown > 0) return;
-        this.isDashing = true;
-        this.dashFrames = 9;
-        this.dashCooldown = 66; // ~1.1s
-        Sound.dash();
-
-        let dx = 0, dy = 0;
-        if (Input.keys['w'] || Input.keys['W'] || Input.keys['ArrowUp']) dy -= 1;
-        if (Input.keys['s'] || Input.keys['S'] || Input.keys['ArrowDown']) dy += 1;
-        if (Input.keys['a'] || Input.keys['A'] || Input.keys['ArrowLeft']) dx -= 1;
-        if (Input.keys['d'] || Input.keys['D'] || Input.keys['ArrowRight']) dx += 1;
-        if (Input.joystick.active) { dx = Input.joystick.x; dy = Input.joystick.y; }
-        if (dx === 0 && dy === 0) { dx = Math.cos(this.angle); dy = Math.sin(this.angle); }
-        const len = Math.hypot(dx, dy);
-        this.dashDirX = dx / len;
-        this.dashDirY = dy / len;
-      },
-
-      cycleWeapon() {
-        if (this.arsenal.length < 2) return;
-        this.gunIndex = (this.gunIndex + 1) % this.arsenal.length;
-        this.currentGun = this.arsenal[this.gunIndex];
-        this.gunAmmo = GUNS[this.currentGun].ammo;
-        this.gunCooldown = 0;
-        Sound.dash();
-        this.updateHUD();
-      },
-
-      
-      // OP SKILL 1: VOID PULSE (R) — Gravity Implosion + Shockwave
+      // OP SKILL 1: VOID PULSE (R)
       voidPulse() {
         if (this.voidPulseCooldown > 0) return;
-        this.voidPulseCooldown = 480; // 8s
+        this.voidPulseCooldown = 480;
         Sound.bossShockwave();
         Game.shake = 20;
         Game.flashAlpha = 0.6;
@@ -2337,7 +1829,6 @@
             e.y += (this.y - e.y) * 0.6;
           }
         }
-
         setTimeout(() => {
           Sound.overdrive();
           Game.shake = 18;
@@ -2360,12 +1851,12 @@
         Particles.spawnShockwave(this.x, this.y, '#7c3aed', pullRange);
       },
 
-      // OP SKILL 2: AZURE OVERDRIVE (T) — God-Mode Transformation
+      // OP SKILL 2: AZURE OVERDRIVE (T)
       azureOverdrive() {
         if (this.azureOverdriveActive || this.azureOverdriveCooldown > 0) return;
         this.azureOverdriveActive = true;
-        this.azureOverdriveTimer = 480; // 8s
-        this.azureOverdriveCooldown = 1200; // 20s
+        this.azureOverdriveTimer = 480;
+        this.azureOverdriveCooldown = 1200;
         Sound.overdrive();
         Game.shake = 25;
         Game.flashAlpha = 0.7;
@@ -2382,13 +1873,12 @@
         }
         if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < burstRange) Boss.takeDamage(burstDmg);
         Particles.spawnShockwave(this.x, this.y, '#38bdf8', 260);
-        Particles.spawnShockwave(this.x, this.y, '#0ea5e9', 180);
       },
 
-      // OP SKILL 3: CHAIN LIGHTNING (G) — Multi-Target Bouncing Arc
+      // OP SKILL 3: CHAIN LIGHTNING (G)
       chainLightning() {
         if (this.chainLightningCooldown > 0) return;
-        this.chainLightningCooldown = 300; // 5s
+        this.chainLightningCooldown = 300;
         Sound.blaster();
         Game.shake = 8;
         Game.flashAlpha = 0.3;
@@ -2414,12 +1904,65 @@
           if (!closest) break;
           hit.add(closest);
           Particles.spawnLightningArc(lastX, lastY, closest.x, closest.y);
-          if (closest === Boss) { Boss.takeDamage(dmg); }
-          else { closest.takeDamage(dmg, 0, 0); }
+          if (closest === Boss) Boss.takeDamage(dmg);
+          else closest.takeDamage(dmg, 0, 0);
           lastX = closest.x;
           lastY = closest.y;
         }
       },
+
+      spinBreaker() {
+        if (this.spinCooldown > 0) return;
+        this.spinCooldown = 264;
+        Sound.overdrive();
+        Game.shake = 14;
+        Game.flashAlpha = 0.5;
+        Game.flashColor = '#38bdf8';
+
+        const range = this.isHybrid ? 220 : 160;
+        let dmg = this.isHybrid ? 110 : 70;
+        if (this.mightTimer > 0) dmg = Math.floor(dmg * 1.65);
+
+        for (let e of Enemies.list) {
+          const d = Math.hypot(e.x - this.x, e.y - this.y);
+          if (d < range) {
+            const ang = Math.atan2(e.y - this.y, e.x - this.x);
+            e.takeDamage(dmg, Math.cos(ang) * 12, Math.sin(ang) * 12);
+          }
+        }
+        if (Boss.active && Math.hypot(Boss.x - this.x, Boss.y - this.y) < range) Boss.takeDamage(dmg);
+        Particles.spawnShockwave(this.x, this.y, this.isHybrid ? '#38bdf8' : '#94a3b8', range);
+      },
+
+      dash() {
+        if (this.isDashing || this.dashCooldown > 0) return;
+        this.isDashing = true;
+        this.dashFrames = 9;
+        this.dashCooldown = 66;
+        Sound.dash();
+
+        let dx = 0, dy = 0;
+        if (Input.keys['w'] || Input.keys['W'] || Input.keys['ArrowUp']) dy -= 1;
+        if (Input.keys['s'] || Input.keys['S'] || Input.keys['ArrowDown']) dy += 1;
+        if (Input.keys['a'] || Input.keys['A'] || Input.keys['ArrowLeft']) dx -= 1;
+        if (Input.keys['d'] || Input.keys['D'] || Input.keys['ArrowRight']) dx += 1;
+        if (Input.joystick.active) { dx = Input.joystick.x; dy = Input.joystick.y; }
+        if (dx === 0 && dy === 0) { dx = Math.cos(this.angle); dy = Math.sin(this.angle); }
+        const len = Math.hypot(dx, dy);
+        this.dashDirX = dx / len;
+        this.dashDirY = dy / len;
+      },
+
+      cycleWeapon() {
+        if (this.arsenal.length < 2) return;
+        this.gunIndex = (this.gunIndex + 1) % this.arsenal.length;
+        this.currentGun = this.arsenal[this.gunIndex];
+        this.gunAmmo = GUNS[this.currentGun].ammo;
+        this.gunCooldown = 0;
+        Sound.dash();
+        this.updateHUD();
+      },
+
       takeDamage(amount) {
         if (this.isDashing) return;
         let dmg = this.guardTimer > 0 ? Math.floor(amount * 0.42) : amount;
@@ -2435,21 +1978,13 @@
         }
       },
 
-      // kept for backward-compat with overdrive calls (no-op now)
-      addOverdrive() {},
-
       updateHUD() {
         document.getElementById('hp-fill').style.width = `${Math.max(0, (this.hp / this.maxHp) * 100)}%`;
-
-        // DASH bar: 0 = cooling down, 100 = ready
         const dashPct = this.dashCooldown > 0 ? Math.max(0, (1 - this.dashCooldown / 66) * 100) : 100;
         document.getElementById('dash-fill').style.width = `${dashPct}%`;
-
-        // SPIN bar
         const spinPct = this.spinCooldown > 0 ? Math.max(0, (1 - this.spinCooldown / 264) * 100) : 100;
         document.getElementById('spin-fill').style.width = `${spinPct}%`;
 
-        // Gun row
         if (this.currentGun) {
           const g = GUNS[this.currentGun];
           document.getElementById('hud-gun-name').innerText = `GUN: ${g.name} (${this.gunIndex + 1}/${this.arsenal.length})`;
@@ -2459,10 +1994,9 @@
           document.getElementById('hud-gun-info').style.display = 'none';
         }
 
-        // Buff tags
         const bl = document.getElementById('hud-buffs-list');
         let html = '';
-        if (this.furyTimer  > 0) html += `<span class="buff-tag buff-fury">FURY ${Math.ceil(this.furyTimer/60)}s</span>`;
+        if (this.furyTimer > 0) html += `<span class="buff-tag buff-fury">FURY ${Math.ceil(this.furyTimer/60)}s</span>`;
         if (this.mightTimer > 0) html += `<span class="buff-tag buff-might">MIGHT ${Math.ceil(this.mightTimer/60)}s</span>`;
         if (this.guardTimer > 0) html += `<span class="buff-tag buff-guard">GUARD ${Math.ceil(this.guardTimer/60)}s</span>`;
         if (this.hasteTimer > 0) html += `<span class="buff-tag buff-haste">HASTE ${Math.ceil(this.hasteTimer/60)}s</span>`;
@@ -2497,7 +2031,7 @@
         ctx.strokeStyle = this.isHybrid ? '#38bdf8' : '#64748b';
         ctx.stroke();
 
-        // SF2 COMPOSITE SWORD RENDERING (Segmented weapon)
+        // SHADOW FIGHT 2 COMPOSITE SWORD RENDERING
         const isSwinging = this.attackCooldown > 0;
         const swordLen = isSwinging ? 48 : 34;
         const numSegments = 5;
@@ -2505,13 +2039,11 @@
         ctx.shadowColor = this.isHybrid ? '#38bdf8' : '#e2e8f0';
         ctx.shadowBlur = this.isHybrid ? 14 : 4;
         
-        // Sword Hilt & Guard
         ctx.fillStyle = '#0f172a';
         ctx.fillRect(10, 6, 8, 4);
-        ctx.fillStyle = '#f59e0b'; // Gold guard accents
+        ctx.fillStyle = '#f59e0b';
         ctx.fillRect(16, 3, 3, 10);
 
-        // Segmented linked blade pieces (Shadow Fight 2 Composite Sword)
         for (let s = 0; s < numSegments; s++) {
           const segX = 19 + s * (swordLen / numSegments);
           const segY = 8 + (isSwinging ? Math.sin(s * 0.9) * 4 : 0);
@@ -2524,7 +2056,6 @@
           ctx.closePath();
           ctx.fill();
 
-          // Glowing connecting wire/chain
           ctx.strokeStyle = this.isHybrid ? '#0ea5e9' : '#64748b';
           ctx.lineWidth = 1.5;
           ctx.beginPath();
@@ -2533,14 +2064,14 @@
           ctx.stroke();
         }
 
-        // Off-hand: Equipped Vulcan Machine Gun
+        // Vulcan Machine Gun offhand
         if (this.currentGun === 'machinegun') {
           ctx.fillStyle = '#334155';
-          ctx.fillRect(8, -12, 18, 5); // Gun body
+          ctx.fillRect(8, -12, 18, 5);
           ctx.fillStyle = '#0284c7';
-          ctx.fillRect(20, -13, 8, 2); // Laser sight / barrel
+          ctx.fillRect(20, -13, 8, 2);
           ctx.fillStyle = '#64748b';
-          ctx.fillRect(14, -7, 5, 4);  // Drum mag
+          ctx.fillRect(14, -7, 5, 4);
         }
 
         ctx.fillStyle = this.isHybrid ? '#ffffff' : '#000000';
@@ -2561,11 +2092,8 @@
       list: [],
       spawn(x, y, grade = 5) {
         let hp = 40, speed = 2.2, radius = 16, color = '#22c55e', stroke = '#15803d';
-        if (grade === 4) { // Stalker
-          hp = 70; speed = 3.4; radius = 17; color = '#eab308'; stroke = '#ca8a04';
-        } else if (grade === 3) { // Armed Apex Predator
-          hp = 140; speed = 2.0; radius = 22; color = '#f97316'; stroke = '#c2410c';
-        }
+        if (grade === 4) { hp = 70; speed = 3.4; radius = 17; color = '#eab308'; stroke = '#ca8a04'; }
+        else if (grade === 3) { hp = 140; speed = 2.0; radius = 22; color = '#f97316'; stroke = '#c2410c'; }
         this.list.push({
           x, y, grade, hp, maxHp: hp, speed, radius, color, stroke,
           vx: 0, vy: 0,
@@ -2587,16 +2115,11 @@
       update() {
         for (let i = this.list.length - 1; i >= 0; i--) {
           const e = this.list[i];
-          if (e.isDead) {
-            this.list.splice(i, 1);
-            continue;
-          }
+          if (e.isDead) { this.list.splice(i, 1); continue; }
 
-          // Knockback decay
           e.x += e.vx; e.y += e.vy;
           e.vx *= 0.85; e.vy *= 0.85;
 
-          // AI Tracking
           const dx = Player.x - e.x;
           const dy = Player.y - e.y;
           const dist = Math.hypot(dx, dy);
@@ -2605,7 +2128,6 @@
             e.x += (dx / dist) * e.speed;
             e.y += (dy / dist) * e.speed;
           } else {
-            // Attack player
             e.attackTimer++;
             if (e.attackTimer > 35) {
               e.attackTimer = 0;
@@ -2614,7 +2136,6 @@
             }
           }
 
-          // Zombie-zombie collision avoidance
           for (let j = 0; j < this.list.length; j++) {
             if (i === j) continue;
             const o = this.list[j];
@@ -2636,7 +2157,6 @@
           const ang = Math.atan2(Player.y - e.y, Player.x - e.x);
           ctx.rotate(ang);
 
-          // Body
           ctx.fillStyle = e.color;
           ctx.beginPath();
           ctx.arc(0, 0, e.radius, 0, Math.PI * 2);
@@ -2645,13 +2165,10 @@
           ctx.strokeStyle = e.stroke;
           ctx.stroke();
 
-          // Claws / Weapons
           if (e.grade === 3) {
-            // Cleaver / Axe
             ctx.fillStyle = '#64748b';
             ctx.fillRect(10, 6, 16, 6);
           } else {
-            // Claws
             ctx.strokeStyle = '#ef4444';
             ctx.lineWidth = 2;
             ctx.beginPath();
@@ -2660,7 +2177,6 @@
             ctx.stroke();
           }
 
-          // Health bar above head
           ctx.restore();
           if (e.hp < e.maxHp) {
             ctx.fillStyle = '#1e293b';
@@ -2677,16 +2193,13 @@
        ===================================================================== */
     const Boss = {
       active: false,
-      type: '', // 'AGENT_X' or 'BLUE_ZOMBIE'
+      type: '',
       x: 0, y: 0,
       radius: 26,
       hp: 1000,
       maxHp: 1000,
-      phase: 1,
       attackTimer: 0,
       angle: 0,
-      state: 'IDLE',
-      teleportTimer: 0,
 
       spawnAgentX() {
         this.active = true;
@@ -2732,7 +2245,6 @@
         if (this.hp <= 0) {
           this.active = false;
           document.getElementById('boss-hud').style.display = 'none';
-          // Boss loot drops
           Pickups.drop(this.x - 18, this.y, true, 'gun');
           Pickups.drop(this.x + 18, this.y, true);
           Game.onBossDefeated(this.type);
@@ -2741,26 +2253,20 @@
 
       update() {
         if (!this.active || Game.state !== 'PLAYING') return;
-
         this.angle = Math.atan2(Player.y - this.y, Player.x - this.x);
         this.attackTimer++;
 
         if (this.type === 'AGENT_X') {
-          // AGENT X: Swift Rapier Lunges & Burgundy Shadow Teleports
           const dist = Math.hypot(Player.x - this.x, Player.y - this.y);
           if (dist > 90) {
             this.x += Math.cos(this.angle) * 3.8;
             this.y += Math.sin(this.angle) * 3.8;
           }
-
           if (this.attackTimer % 90 === 0) {
-            // Rapier Lunge Combo
             Sound.slash();
             Projectiles.spawn(this.x, this.y, this.angle, 14, 25, 'SHADOW_BLADE');
           }
-
           if (this.attackTimer % 210 === 0) {
-            // Shadow Teleport behind player
             Sound.dash();
             Particles.spawnShadowVortex(this.x, this.y);
             const ang = Player.angle + Math.PI;
@@ -2769,30 +2275,22 @@
             Particles.spawnShadowVortex(this.x, this.y);
           }
         } else if (this.type === 'BLUE_ZOMBIE') {
-          // BLUE ZOMBIE: Telekinetic Gravity, Azure Shockwaves, Dimensional Pulses
           const dist = Math.hypot(Player.x - this.x, Player.y - this.y);
           this.x += Math.cos(this.angle) * 2.2;
           this.y += Math.sin(this.angle) * 2.2;
 
-          // Azure Shockwave Pulse
           if (this.attackTimer % 110 === 0) {
             Sound.bossShockwave();
             Game.shake = 12;
             Particles.spawnShockwave(this.x, this.y, '#38bdf8', 220);
-            if (dist < 220) {
-              Player.takeDamage(26);
-            }
+            if (dist < 220) Player.takeDamage(26);
           }
-
-          // Telekinetic Azure Projectile Ring
           if (this.attackTimer % 180 === 0) {
             Sound.blaster();
             for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
               Projectiles.spawn(this.x, this.y, a, 8, 30, 'AZURE_ORB');
             }
           }
-
-          // Gravitational Drag
           if (dist > 180 && this.attackTimer % 260 === 0) {
             Player.x += (this.x - Player.x) * 0.35;
             Player.y += (this.y - Player.y) * 0.35;
@@ -2811,7 +2309,6 @@
 
         if (this.type === 'BLUE_ZOMBIE') {
           // CANONICAL BLUE ZOMBIE: Human-shaped, blue skin, ordinary gray T-shirt, black pants
-          // Azure telekinetic aura
           ctx.beginPath();
           ctx.arc(0, 0, this.radius + 8, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(56, 189, 248, 0.22)';
@@ -2819,7 +2316,6 @@
           ctx.shadowBlur = 24;
           ctx.fill();
 
-          // Gray T-shirt torso
           ctx.fillStyle = '#64748b';
           ctx.beginPath();
           ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
@@ -2828,21 +2324,18 @@
           ctx.strokeStyle = '#38bdf8';
           ctx.stroke();
 
-          // Pale Blue Head / Hands
           ctx.fillStyle = '#22d3ee';
           ctx.beginPath();
           ctx.arc(8, 0, 10, 0, Math.PI * 2);
           ctx.fill();
 
-          // Cold Cyan Glowing Eyes
           ctx.fillStyle = '#ffffff';
           ctx.shadowColor = '#ffffff';
           ctx.shadowBlur = 8;
           ctx.fillRect(12, -4, 4, 3);
           ctx.fillRect(12, 2, 4, 3);
         } else if (this.type === 'AGENT_X') {
-          // CANONICAL AGENT X: Pale human male, dark hair, black coat, white shirt, burgundy vest
-          // Burgundy shadow aura
+          // CANONICAL AGENT X: Pale human male, dark hair, black coat, burgundy vest
           ctx.beginPath();
           ctx.arc(0, 0, this.radius + 6, 0, Math.PI * 2);
           ctx.fillStyle = 'rgba(168, 85, 247, 0.2)';
@@ -2850,21 +2343,18 @@
           ctx.shadowBlur = 18;
           ctx.fill();
 
-          // Black coat & burgundy vest
           ctx.fillStyle = '#0f172a';
           ctx.beginPath();
           ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = '#881337'; // burgundy vest
+          ctx.fillStyle = '#881337';
           ctx.fillRect(-6, -8, 12, 16);
 
-          // Head & slick dark hair
-          ctx.fillStyle = '#ffe4e6'; // pale face
+          ctx.fillStyle = '#ffe4e6';
           ctx.beginPath();
           ctx.arc(8, 0, 9, 0, Math.PI * 2);
           ctx.fill();
 
-          // Rapier Cane Blade
           ctx.strokeStyle = '#cbd5e1';
           ctx.lineWidth = 3;
           ctx.beginPath();
@@ -2895,9 +2385,7 @@
           p.y += p.vy;
           p.life--;
 
-          // Collisions
-          if (p.type === 'BULLET' || p.type === 'HYBRID_BLASTER' || p.isPlayer) {
-            // Hit Enemies
+          if (p.isPlayer || p.type === 'BULLET') {
             for (let e of Enemies.list) {
               if (Math.hypot(e.x - p.x, e.y - p.y) < e.radius + 8) {
                 e.takeDamage(p.dmg, p.vx * 0.4, p.vy * 0.4);
@@ -2905,19 +2393,16 @@
                 break;
               }
             }
-            // Hit Boss
             if (Boss.active && Math.hypot(Boss.x - p.x, Boss.y - p.y) < Boss.radius + 8) {
               Boss.takeDamage(p.dmg);
               p.life = 0;
             }
           } else {
-            // Enemy / Boss Projectile hitting player
             if (Math.hypot(Player.x - p.x, Player.y - p.y) < Player.radius + 8) {
               Player.takeDamage(p.dmg);
               p.life = 0;
             }
           }
-
           if (p.life <= 0) this.list.splice(i, 1);
         }
       },
@@ -2927,25 +2412,18 @@
           ctx.translate(p.x, p.y);
           ctx.rotate(p.angle);
 
-          if (p.type === 'HYBRID_BLASTER') {
-            ctx.fillStyle = '#38bdf8';
-            ctx.shadowColor = '#38bdf8';
-            ctx.shadowBlur = 12;
-            ctx.fillRect(-10, -3, 20, 6);
-          } else if (p.type === 'AZURE_ORB') {
+          if (p.type === 'AZURE_ORB') {
             ctx.fillStyle = '#06b6d4';
             ctx.shadowColor = '#22d3ee';
             ctx.shadowBlur = 16;
-            ctx.beginPath();
-            ctx.arc(0, 0, 7, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
           } else if (p.type === 'SHADOW_BLADE') {
             ctx.fillStyle = '#9333ea';
             ctx.shadowColor = '#a855f7';
             ctx.shadowBlur = 12;
             ctx.fillRect(-8, -2, 16, 4);
           } else {
-            ctx.fillStyle = '#f59e0b';
+            ctx.fillStyle = p.isPlayer ? '#38bdf8' : '#f59e0b';
             ctx.fillRect(-6, -2, 12, 4);
           }
           ctx.restore();
@@ -2954,7 +2432,7 @@
     };
 
     /* =====================================================================
-       PARTICLES & VFX
+       PARTICLES & VISUAL EFFECTS
        ===================================================================== */
     const Particles = {
       list: [],
@@ -2973,7 +2451,6 @@
           type: 'COMPOSITE_SLASH', x, y, angle, range, isHybrid,
           comboStep, life: 12, maxLife: 12
         });
-        // Segment sparks and ribbon trail
         for (let s = 1; s <= 5; s++) {
           const segDist = (range / 5) * s;
           const a = angle + (Math.random() - 0.5) * 0.4;
@@ -2984,23 +2461,20 @@
           });
         }
       },
-      spawnSlashArc(x, y, angle, range, isHybrid, comboStep) {
-        this.list.push({
-          type: 'SLASH_ARC', x, y, angle, range, isHybrid,
-          comboStep, life: 9, maxLife: 9
-        });
-      },
       spawnDashGhost(x, y, angle, isHybrid) {
-        this.list.push({
-          type: 'GHOST', x, y, angle, isHybrid,
-          life: 14, maxLife: 14
-        });
+        this.list.push({ type: 'GHOST', x, y, angle, isHybrid, life: 14, maxLife: 14 });
       },
       spawnShockwave(x, y, color, maxRadius) {
-        this.list.push({
-          type: 'WAVE', x, y, color, currentRadius: 10, maxRadius,
-          life: 20, maxLife: 20
-        });
+        this.list.push({ type: 'WAVE', x, y, color, currentRadius: 10, maxRadius, life: 20, maxLife: 20 });
+      },
+      spawnShadowVortex(x, y) {
+        for (let i = 0; i < 14; i++) {
+          const a = Math.random() * Math.PI * 2;
+          this.list.push({
+            x, y, vx: Math.cos(a) * 3, vy: Math.sin(a) * 3,
+            life: 20, maxLife: 20, size: 4, color: '#881337'
+          });
+        }
       },
       spawnLightningArc(x1, y1, x2, y2) {
         const steps = 8;
@@ -3012,18 +2486,7 @@
             x: px, y: py, life: 18, maxLife: 18, size: 5 + Math.random() * 4, color: '#facc15'
           });
         }
-        this.list.push({
-          x: x2, y: y2, life: 12, maxLife: 12, size: 14, color: '#fef08a'
-        });
-      },
-      spawnShadowVortex(x, y) {
-        for (let i = 0; i < 14; i++) {
-          const a = Math.random() * Math.PI * 2;
-          this.list.push({
-            x, y, vx: Math.cos(a) * 3, vy: Math.sin(a) * 3,
-            life: 20, maxLife: 20, size: 4, color: '#881337'
-          });
-        }
+        this.list.push({ x: x2, y: y2, life: 12, maxLife: 12, size: 14, color: '#fef08a' });
       },
       update() {
         for (let i = this.list.length - 1; i >= 0; i--) {
@@ -3033,9 +2496,7 @@
             p.x += p.vx; p.y += p.vy;
             p.vx *= 0.92; p.vy *= 0.92;
           }
-          if (p.type === 'WAVE') {
-            p.currentRadius += (p.maxRadius - p.currentRadius) * 0.18;
-          }
+          if (p.type === 'WAVE') p.currentRadius += (p.maxRadius - p.currentRadius) * 0.18;
           if (p.life <= 0) this.list.splice(i, 1);
         }
       },
@@ -3046,50 +2507,28 @@
           if (p.type === 'COMPOSITE_SLASH') {
             ctx.translate(p.x, p.y);
             ctx.rotate(p.angle);
-            // Draw whip segments
             ctx.strokeStyle = p.isHybrid ? `rgba(56, 189, 248, ${alpha})` : `rgba(251, 191, 36, ${alpha})`;
             ctx.shadowColor = p.isHybrid ? '#38bdf8' : '#f59e0b';
             ctx.shadowBlur = 16;
             ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.arc(0, 0, p.range, -0.55, 0.55);
-            ctx.stroke();
-            // Inner serrated sharp arc
+            ctx.beginPath(); ctx.arc(0, 0, p.range, -0.55, 0.55); ctx.stroke();
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(0, 0, p.range * 0.85, -0.4, 0.4);
-            ctx.stroke();
-          } else if (p.type === 'SLASH_ARC') {
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.angle);
-            ctx.strokeStyle = p.isHybrid ? `rgba(56, 189, 248, ${alpha})` : `rgba(241, 245, 249, ${alpha})`;
-            ctx.shadowColor = p.isHybrid ? '#38bdf8' : '#ffffff';
-            ctx.shadowBlur = 12;
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.arc(0, 0, p.range, -0.4, 0.4);
-            ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, p.range * 0.85, -0.4, 0.4); ctx.stroke();
           } else if (p.type === 'GHOST') {
             ctx.translate(p.x, p.y);
             ctx.rotate(p.angle);
             ctx.fillStyle = p.isHybrid ? `rgba(56, 189, 248, ${alpha * 0.3})` : `rgba(148, 163, 184, ${alpha * 0.25})`;
-            ctx.beginPath();
-            ctx.arc(0, 0, 18, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI * 2); ctx.fill();
           } else if (p.type === 'WAVE') {
             ctx.strokeStyle = p.color;
             ctx.globalAlpha = alpha;
             ctx.lineWidth = 5;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.currentRadius, 0, Math.PI * 2);
-            ctx.stroke();
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.currentRadius, 0, Math.PI * 2); ctx.stroke();
           } else {
             ctx.fillStyle = p.color;
             ctx.globalAlpha = alpha;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size || 3, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size || 3, 0, Math.PI * 2); ctx.fill();
           }
           ctx.restore();
         }
@@ -3097,13 +2536,13 @@
     };
 
     /* =====================================================================
-       INPUT HANDLER (Keyboard + Mouse + Mobile Virtual Controls)
+       INPUT HANDLER (Keyboard + Mouse + Virtual Touch)
        ===================================================================== */
     const Input = {
       keys: {},
+      shiftHeld: false,
       mouseX: window.innerWidth / 2,
       mouseY: window.innerHeight / 2,
-      shiftHeld: false,
       joystick: { active: false, x: 0, y: 0, startX: 0, startY: 0 },
 
       init() {
@@ -3116,7 +2555,6 @@
             return;
           }
 
-          // Gameplay controls
           if (e.key === 'Enter') Player.attack();
           if (e.key === ' ') { Player.dash(); e.preventDefault(); }
           if (e.key === 'e' || e.key === 'E') Player.spinBreaker();
@@ -3147,7 +2585,6 @@
 
         window.addEventListener('contextmenu', e => e.preventDefault());
 
-        // Setup Touch Controls for Mobile
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
           document.getElementById('mobile-controls').style.display = 'block';
           this.setupTouch();
@@ -3175,8 +2612,7 @@
 
         const resetJoy = () => {
           this.joystick.active = false;
-          this.joystick.x = 0;
-          this.joystick.y = 0;
+          this.joystick.x = 0; this.joystick.y = 0;
           knob.style.transform = `translate(-50%, -50%)`;
         };
         zone.addEventListener('touchend', resetJoy);
@@ -3205,19 +2641,311 @@
     };
 
     /* =====================================================================
+       GAME ENGINE & STATE
+       ===================================================================== */
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const avatarCanvas = document.getElementById('avatarCanvas');
+    const avCtx = avatarCanvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const Game = {
+      state: 'STORY',
+      currentChapter: 1,
+      enemiesKilled: 0,
+      quotaKilled: 14,
+      shake: 0,
+      flashAlpha: 0,
+      flashColor: '#ffffff',
+      isPaused: false,
+
+      script: [],
+      scriptIndex: 0,
+      dialogueTimer: null,
+      dialogueTextTarget: "",
+      charIndex: 0,
+
+      init() {
+        UI.init();
+        Input.init();
+        this.loadChapter(1);
+        requestAnimationFrame(loop);
+      },
+
+      loadChapter(ch) {
+        this.currentChapter = ch;
+        Enemies.list = [];
+        Projectiles.list = [];
+        Particles.list = [];
+        Boss.active = false;
+        Player.resetForChapter(ch);
+
+        const chData = MASTER_CHAPTERS.find(c => c.id === ch) || MASTER_CHAPTERS[0];
+        document.getElementById('stage-title').innerText = chData.title.toUpperCase();
+        document.getElementById('wave-tracker').innerText = chData.subtitle;
+
+        this.playCutscene(chData.lines, () => {
+          this.state = 'PLAYING';
+          this.enemiesKilled = 0;
+
+          if (ch === 1) { this.quotaKilled = 14; this.spawnHorde(14, 5); }
+          else if (ch === 2) { this.quotaKilled = 16; this.spawnHorde(16, 5); }
+          else if (ch === 3) { this.quotaKilled = 18; this.spawnHorde(18, 4); }
+          else if (ch === 4) { this.quotaKilled = 20; this.spawnHorde(20, 4); }
+          else if (ch === 5) { this.quotaKilled = 22; this.spawnHorde(22, 3); }
+          else if (ch === 6) { this.quotaKilled = 24; this.spawnHorde(24, 3); }
+          else if (ch === 7) { Boss.spawnAgentX(); }
+          else if (ch === 8) { this.quotaKilled = 28; this.spawnHorde(28, 3); }
+          else if (ch === 9) { Boss.spawnAgentX(); }
+          else if (ch === 10) { Boss.spawnBlueZombie(); }
+          else if (ch === 11) { Boss.spawnBlueZombie(); }
+          else if (ch === 12) { Boss.spawnBlueZombie(); }
+        });
+      },
+
+      playCutscene(scriptArray, onFinish) {
+        this.state = 'STORY';
+        this.script = scriptArray;
+        this.scriptIndex = 0;
+        this.onCutsceneFinish = onFinish;
+        const cutsceneBox = document.getElementById('cutscene-ui');
+        cutsceneBox.style.display = 'block';
+
+        document.getElementById('btn-skip-cutscene').onclick = (e) => {
+          e.stopPropagation();
+          this.endCutscene();
+        };
+        document.getElementById('btn-next-dialogue').onclick = (e) => {
+          e.stopPropagation();
+          this.advanceDialogue();
+        };
+        cutsceneBox.onclick = () => {
+          this.advanceDialogue();
+        };
+
+        this.showDialogueLine();
+      },
+
+      showDialogueLine() {
+        if (this.scriptIndex >= this.script.length) {
+          this.endCutscene();
+          return;
+        }
+        const item = this.script[this.scriptIndex];
+        const speakerEl = document.getElementById('speaker-name');
+        const roleEl = document.getElementById('speaker-role');
+        const cutsceneBox = document.getElementById('cutscene-ui');
+
+        speakerEl.innerText = item.speaker;
+        speakerEl.style.color = item.theme || '#38bdf8';
+        roleEl.innerText = item.role || 'COMMUNICATION';
+        roleEl.style.color = item.theme || '#38bdf8';
+        roleEl.style.borderColor = (item.theme || '#38bdf8') + '55';
+        roleEl.style.backgroundColor = (item.theme || '#38bdf8') + '1a';
+        cutsceneBox.style.borderLeftColor = item.theme || '#38bdf8';
+        cutsceneBox.style.boxShadow = `0 16px 50px rgba(0,0,0,0.85), 0 0 30px ${item.theme || '#38bdf8'}33`;
+
+        this.renderAvatar(item.speaker, item.theme);
+
+        const textEl = document.getElementById('dialogue-text');
+        textEl.innerText = "";
+        this.dialogueTextTarget = item.text;
+        this.charIndex = 0;
+
+        if (this.dialogueTimer) clearInterval(this.dialogueTimer);
+        this.dialogueTimer = setInterval(() => {
+          if (this.charIndex < this.dialogueTextTarget.length) {
+            textEl.innerText += this.dialogueTextTarget[this.charIndex];
+            if (this.charIndex % 3 === 0) Sound.beep(350 + (this.charIndex % 5) * 40);
+            this.charIndex++;
+          } else {
+            clearInterval(this.dialogueTimer);
+          }
+        }, 16);
+      },
+
+      advanceDialogue() {
+        if (this.charIndex < this.dialogueTextTarget.length) {
+          clearInterval(this.dialogueTimer);
+          document.getElementById('dialogue-text').innerText = this.dialogueTextTarget;
+          this.charIndex = this.dialogueTextTarget.length;
+          return;
+        }
+        this.scriptIndex++;
+        this.showDialogueLine();
+      },
+
+      endCutscene() {
+        if (this.dialogueTimer) clearInterval(this.dialogueTimer);
+        document.getElementById('cutscene-ui').style.display = 'none';
+        if (this.onCutsceneFinish) this.onCutsceneFinish();
+      },
+
+      renderAvatar(name, themeColor = '#38bdf8') {
+        avCtx.clearRect(0, 0, 72, 72);
+        avCtx.fillStyle = '#090e15';
+        avCtx.fillRect(0, 0, 72, 72);
+
+        avCtx.save();
+        avCtx.translate(36, 36);
+
+        if (name.includes('Blue Zombie') || name.includes('SOVEREIGN')) {
+          avCtx.fillStyle = '#22d3ee';
+          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#ffffff';
+          avCtx.fillRect(-10, -6, 6, 4); avCtx.fillRect(4, -6, 6, 4);
+          avCtx.fillStyle = '#64748b';
+          avCtx.fillRect(-14, 12, 28, 12);
+        } else if (name.includes('Agent X')) {
+          avCtx.fillStyle = '#0f172a';
+          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#881337';
+          avCtx.fillRect(-6, 2, 12, 22);
+          avCtx.fillStyle = '#ffe4e6';
+          avCtx.beginPath(); avCtx.arc(0, -4, 14, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#0f172a';
+          avCtx.beginPath(); avCtx.arc(0, -10, 14, Math.PI, Math.PI * 2); avCtx.fill();
+        } else if (name.includes('Dr.') || name.includes('Vance')) {
+          avCtx.fillStyle = '#334155';
+          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#fde047';
+          avCtx.beginPath(); avCtx.arc(0, -4, 14, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#94a3b8';
+          avCtx.fillRect(-12, -8, 24, 3);
+        } else if (name.includes('Maya')) {
+          avCtx.fillStyle = '#f472b6';
+          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#fed7aa';
+          avCtx.beginPath(); avCtx.arc(0, -2, 14, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#7c2d12';
+          avCtx.beginPath(); avCtx.arc(0, -6, 16, Math.PI * 0.9, Math.PI * 2.1); avCtx.fill();
+        } else {
+          // Zest / Narrator
+          avCtx.fillStyle = themeColor;
+          avCtx.beginPath(); avCtx.arc(0, 0, 24, 0, Math.PI * 2); avCtx.fill();
+          avCtx.fillStyle = '#ffffff';
+          avCtx.beginPath(); avCtx.arc(-6, -4, 3, 0, Math.PI * 2); avCtx.fill();
+          avCtx.beginPath(); avCtx.arc(6, -4, 3, 0, Math.PI * 2); avCtx.fill();
+        }
+        avCtx.restore();
+      },
+
+      spawnHorde(count, maxGrade = 5) {
+        for (let i = 0; i < count; i++) {
+          setTimeout(() => {
+            if (this.state !== 'PLAYING') return;
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 550 + Math.random() * 200;
+            const x = Player.x + Math.cos(angle) * dist;
+            const y = Player.y + Math.sin(angle) * dist;
+            let grade = 5;
+            if (maxGrade <= 4 && Math.random() > 0.45) grade = 4;
+            if (maxGrade <= 3 && Math.random() > 0.7) grade = 3;
+            Enemies.spawn(x, y, grade);
+          }, i * 350);
+        }
+      },
+
+      onEnemyDefeated(enemy) {
+        this.enemiesKilled++;
+        if (!Player.starterGunDropped) {
+          Pickups.drop(enemy.x, enemy.y, false, 'gun');
+          Player.starterGunDropped = true;
+        } else if (Player.currentGun && Player.gunAmmo <= 10) {
+          Pickups.drop(enemy.x, enemy.y, false, 'ammo');
+        } else if (Math.random() < 0.35) {
+          Pickups.drop(enemy.x, enemy.y, false);
+        }
+
+        document.getElementById('wave-tracker').innerText = `Defeated: ${this.enemiesKilled} / ${this.quotaKilled}`;
+        if (this.quotaKilled && this.enemiesKilled >= this.quotaKilled) {
+          this.quotaKilled = 0;
+          Enemies.list = [];
+          const nextCh = this.currentChapter + 1;
+          if (nextCh <= MASTER_CHAPTERS.length) {
+            this.showBanner("CHAPTER COMPLETED", `PREPARING CHAPTER ${nextCh}...`);
+            setTimeout(() => { this.loadChapter(nextCh); }, 2500);
+          } else {
+            this.showBanner("WAR FOR TOMORROW", "EPILOGUE COMPLETE — SANCTUARY ENDURES");
+          }
+        }
+      },
+
+      onBossDefeated(bossName) {
+        if (this.currentChapter === 7) {
+          this.showBanner("AGENT X RETREATS", "HAVEN GATES DEFENDED");
+          setTimeout(() => { this.loadChapter(8); }, 2500);
+        } else if (this.currentChapter === 9) {
+          this.showBanner("AGENT X SLAIN", "THE SOVEREIGN ENTERS THE BATTLEFIELD");
+          setTimeout(() => { this.loadChapter(10); }, 2500);
+        } else if (this.currentChapter === 10) {
+          setTimeout(() => { this.loadChapter(11); }, 2000);
+        } else if (this.currentChapter === 11) {
+          setTimeout(() => { this.loadChapter(12); }, 2000);
+        } else if (this.currentChapter === 12) {
+          this.showBanner("ULTIMATE SACRIFICE", "REST IN PEACE, ZEST");
+          this.playCutscene(MASTER_CHAPTERS[11].lines, () => {
+            this.showBanner("THE UNBROKEN DAWN", "HUMANITY ENDURES IN HAVEN");
+          });
+        } else {
+          const nextCh = this.currentChapter + 1;
+          if (nextCh <= MASTER_CHAPTERS.length) this.loadChapter(nextCh);
+        }
+      },
+
+      showBanner(title, sub) {
+        const b = document.getElementById('banner');
+        document.getElementById('banner-title').innerText = title;
+        document.getElementById('banner-sub').innerText = sub;
+        b.style.display = 'block';
+        setTimeout(() => { b.style.display = 'none'; }, 4000);
+      }
+    };
+
+    /* =====================================================================
        UI & MODALS
        ===================================================================== */
     const UI = {
       init() {
-        // Build Codex Content
         const codexGrid = document.getElementById('codex-content');
-        codexGrid.innerHTML = CODEX_DATA.map(item => `
-          <div class="codex-card ${item.class}">
-            <div class="codex-tag">${item.tag}</div>
+        codexGrid.innerHTML = MASTER_CHARACTERS.map(item => `
+          <div class="codex-card ${item.id === 'blue_zombie' ? 'grade-0' : (item.id === 'agent_x' ? 'grade-1' : '')}">
+            <div class="codex-tag">${item.role}</div>
             <div class="codex-name">${item.name}</div>
-            <div class="codex-desc">${item.desc}</div>
+            <div class="codex-desc">[${item.status}] ${item.description}</div>
+          </div>
+        `).join('') + MASTER_HIERARCHY.map(h => `
+          <div class="codex-card ${h.grade <= 1 ? 'grade-' + h.grade : ''}">
+            <div class="codex-tag">GRADE ${h.grade}</div>
+            <div class="codex-name">${h.title}</div>
+            <div class="codex-desc">${h.description} (Threat: ${h.threat_level})</div>
           </div>
         `).join('');
+
+        const modalButtons = document.getElementById('modal-buttons');
+        modalButtons.innerHTML = `
+          <button class="menu-btn" id="m-btn-resume">RESUME MISSION <span class="badge">ESC</span></button>
+          ${MASTER_CHAPTERS.map(c => `
+            <button class="menu-btn" onclick="UI.toggleMenu(); Game.loadChapter(${c.id});">
+              CH ${c.id}: ${c.title.replace(/^Chapter \d+:\s*/, '')}
+              <span class="badge">${c.subtitle.split('—')[0].trim()}</span>
+            </button>
+          `).join('')}
+          <button class="menu-btn" id="m-btn-sound">AUDIO: SYNTHESIZER SOUND ON</button>
+        `;
+
+        document.getElementById('m-btn-resume').onclick = () => this.toggleMenu();
+        const soundBtn = document.getElementById('m-btn-sound');
+        soundBtn.onclick = () => {
+          Sound.enabled = !Sound.enabled;
+          soundBtn.innerText = Sound.enabled ? "AUDIO: SYNTHESIZER SOUND ON" : "AUDIO: MUTED";
+        };
 
         document.getElementById('btn-codex').onclick = () => {
           document.getElementById('codex-modal').style.display = 'flex';
@@ -3225,21 +2953,7 @@
         document.getElementById('btn-close-codex').onclick = () => {
           document.getElementById('codex-modal').style.display = 'none';
         };
-        document.getElementById('btn-pause').onclick = () => {
-          this.toggleMenu();
-        };
-
-        document.getElementById('m-btn-resume').onclick = () => this.toggleMenu();
-        document.getElementById('m-btn-stage1').onclick = () => { this.toggleMenu(); Game.loadChapter(1); };
-        document.getElementById('m-btn-stage2').onclick = () => { this.toggleMenu(); Game.loadChapter(2); };
-        document.getElementById('m-btn-stage3').onclick = () => { this.toggleMenu(); Game.loadChapter(3); };
-        document.getElementById('m-btn-stage4').onclick = () => { this.toggleMenu(); Game.loadChapter(4); };
-
-        const soundBtn = document.getElementById('m-btn-sound');
-        soundBtn.onclick = () => {
-          Sound.enabled = !Sound.enabled;
-          soundBtn.innerText = Sound.enabled ? "AUDIO: SYNTHESIZER SOUND ON" : "AUDIO: MUTED";
-        };
+        document.getElementById('btn-pause').onclick = () => this.toggleMenu();
       },
 
       toggleMenu() {
@@ -3254,7 +2968,6 @@
        MAIN GAME LOOP
        ===================================================================== */
     function loop() {
-      // Screen Shake offset
       let shakeX = 0, shakeY = 0;
       if (Game.shake > 0) {
         shakeX = (Math.random() - 0.5) * Game.shake;
@@ -3266,11 +2979,9 @@
       ctx.save();
       ctx.translate(shakeX, shakeY);
 
-      // Background Grid / Post-apocalyptic Arena
       ctx.fillStyle = '#090e15';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Floor Grid
       ctx.strokeStyle = '#121d2b';
       ctx.lineWidth = 1;
       const gridSize = 48;
@@ -3281,7 +2992,6 @@
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
       }
 
-      // Update & Draw Game Entities
       if (!Game.isPaused) {
         Player.update();
         Enemies.update();
@@ -3300,7 +3010,6 @@
 
       ctx.restore();
 
-      // Screen Flash overlay
       if (Game.flashAlpha > 0) {
         ctx.fillStyle = Game.flashColor;
         ctx.globalAlpha = Game.flashAlpha;
